@@ -34,7 +34,7 @@ export function ReportsManager() {
     setError("");
 
     const [ordersRes, itemsRes, productsRes] = await Promise.all([
-      supabase.from("orders").select("*").order("order_date", { ascending: false }),
+      supabase.from("orders").select("*").order("created_at", { ascending: false }),
       supabase.from("order_items").select("*"),
       supabase.from("products").select("*"),
     ]);
@@ -72,7 +72,7 @@ export function ReportsManager() {
     const bucket = new Map<string, number>();
 
     orders.forEach((order) => {
-      const date = new Date(order.order_date);
+      const date = new Date(order.created_at);
       const key = period === "daily" ? date.toISOString().slice(0, 10) : getMonthKey(date);
       bucket.set(key, (bucket.get(key) ?? 0) + Number(order.total_price));
     });

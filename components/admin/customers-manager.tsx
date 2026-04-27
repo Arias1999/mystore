@@ -26,8 +26,8 @@ export function CustomersManager() {
     setError("");
 
     const { data, error: fetchError } = await supabase
-      .from("customers")
-      .select("*")
+      .from("users")
+      .select("id, name, email, created_at")
       .order("created_at", { ascending: false });
 
     if (fetchError) {

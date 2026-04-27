@@ -13,13 +13,13 @@ import type { Database } from "@/types/database";
 
 type Product = Database["public"]["Tables"]["products"]["Row"];
 type Order = Database["public"]["Tables"]["orders"]["Row"];
-type Customer = Database["public"]["Tables"]["customers"]["Row"];
+type Customer = { id: string; name: string | null; email: string };
 
 export function DashboardOverview() {
   const supabase = createClient();
   const [products, setProducts] = useState<Product[]>([]);
   const [orders, setOrders] = useState<Order[]>([]);
-  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [customers, setCustomers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -30,11 +30,12 @@ export function DashboardOverview() {
     const [productsRes, ordersRes, customersRes] = await Promise.all([
       supabase.from("products").select("*"),
       supabase.from("orders").select("*"),
-      supabase.from("customers").select("*"),
+      supabase.from("users").select("*"),
     ]);
 
     if (productsRes.error || ordersRes.error || customersRes.error) {
       setError(productsRes.error?.message || ordersRes.error?.message || customersRes.error?.message || "Unable to load dashboard.");
+
       setLoading(false);
       return;
     }
@@ -54,7 +55,7 @@ export function DashboardOverview() {
       .channel("admin-dashboard-overview")
       .on("postgres_changes", { event: "*", schema: "public", table: "products" }, () => void fetchDashboard())
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => void fetchDashboard())
-      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => void fetchDashboard())
+      .on("postgres_changes", { event: "*", schema: "public", table: "users" }, () => void fetchDashboard())
       .subscribe();
 
     return () => {
@@ -75,7 +76,7 @@ export function DashboardOverview() {
 
     const map = new Map(days.map((day) => [day.key, day]));
     orders.forEach((order) => {
-      const key = new Date(order.order_date).toISOString().slice(0, 10);
+      const key = new Date(order.created_at).toISOString().slice(0, 10);
       const row = map.get(key);
       if (row) row.revenue += Number(order.total_price);
     });
@@ -97,7 +98,7 @@ export function DashboardOverview() {
 
   const recentOrders = useMemo(() => {
     return [...orders]
-      .sort((a, b) => new Date(b.order_date).getTime() - new Date(a.order_date).getTime())
+      .sort((a, b) => new Date(b.created_at).getTime() - new Date(a.created_at).getTime())
       .slice(0, 6);
   }, [orders]);
 
@@ -139,10 +140,10 @@ export function DashboardOverview() {
               <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{order.id.slice(0, 8)}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">
-                  {customerMap.get(order.customer_id)?.name || customerMap.get(order.customer_id)?.email || order.customer_id.slice(0, 8)}
+                  {customerMap.get(order.user_id)?.name || customerMap.get(order.user_id)?.email || order.user_id.slice(0, 8)}
                 </td>
                 <td className="px-4 py-3 text-[var(--text)]">{order.status}</td>
-                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.order_date)}</td>
+                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.created_at)}</td>
                 <td className="px-4 py-3 text-[var(--text)]">{formatCurrency(order.total_price)}</td>
               </tr>
             ))}

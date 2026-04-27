@@ -23,8 +23,8 @@ export function CustomerDetails({ customerId }: { customerId: string }) {
     setError("");
 
     const [customerRes, ordersRes] = await Promise.all([
-      supabase.from("customers").select("*").eq("id", customerId).single(),
-      supabase.from("orders").select("*").eq("customer_id", customerId).order("order_date", { ascending: false }),
+      supabase.from("users").select("id, name, email, created_at").eq("id", customerId).single(),
+      supabase.from("orders").select("*").eq("user_id", customerId).order("created_at", { ascending: false }),
     ]);
 
     if (customerRes.error || ordersRes.error) {
@@ -107,7 +107,7 @@ export function CustomerDetails({ customerId }: { customerId: string }) {
             {orders.map((order) => (
               <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{order.id.slice(0, 8)}</td>
-                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.order_date)}</td>
+                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.created_at)}</td>
                 <td className="px-4 py-3 text-[var(--text)]">{order.status}</td>
                 <td className="px-4 py-3 text-[var(--text)]">{formatCurrency(order.total_price)}</td>
               </tr>

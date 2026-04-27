@@ -30,16 +30,14 @@ export type Database = {
       orders: {
         Row: {
           id: string;
-          customer_id: string;
-          order_date: string;
+          user_id: string;
           status: "Pending" | "Delivered" | "Cancelled";
           total_price: number;
           created_at: string;
         };
         Insert: {
           id?: string;
-          customer_id: string;
-          order_date?: string;
+          user_id: string;
           status?: "Pending" | "Delivered" | "Cancelled";
           total_price: number;
           created_at?: string;
@@ -72,19 +70,33 @@ export type Database = {
           id: string;
           email: string;
           name: string | null;
-          role: "admin" | "customer";
-          is_blocked: boolean;
+          role: "admin" | "moderator" | "customer";
           created_at: string;
         };
         Insert: {
           id: string;
           email: string;
           name?: string | null;
-          role?: "admin" | "customer";
-          is_blocked?: boolean;
+          role?: "admin" | "moderator" | "customer";
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["users"]["Insert"]>;
+        Relationships: [];
+      };
+      profiles: {
+        Row: {
+          id: string;
+          email: string;
+          role: string;
+          created_at: string;
+        };
+        Insert: {
+          id: string;
+          email: string;
+          role?: string;
+          created_at?: string;
+        };
+        Update: Partial<Database["public"]["Tables"]["profiles"]["Insert"]>;
         Relationships: [];
       };
       customers: {

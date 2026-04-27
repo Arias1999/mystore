@@ -40,7 +40,7 @@ export default function RegisterPage() {
         email: email.trim(),
         password,
         options: {
-          data: { name: fullName.trim(), phone: phone.trim(), address: address.trim(), role: "user" },
+          data: { name: fullName.trim(), phone: phone.trim(), address: address.trim(), role: "customer" },
         },
       });
 

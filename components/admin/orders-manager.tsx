@@ -9,8 +9,7 @@ import { Pagination } from "@/components/admin/pagination";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
-type Order = Database["public"]["Tables"]["orders"]["Row"];
-type Customer = Database["public"]["Tables"]["customers"]["Row"];
+type Customer = { id: string; name: string | null; email: string };
 
 const statuses: Array<Order["status"]> = ["Pending", "Delivered", "Cancelled"];
 const PAGE_SIZE = 10;
@@ -28,8 +27,8 @@ export function OrdersManager() {
     setError("");
 
     const [ordersRes, customersRes] = await Promise.all([
-      supabase.from("orders").select("*").order("order_date", { ascending: false }),
-      supabase.from("customers").select("*"),
+      supabase.from("orders").select("*").order("created_at", { ascending: false }),
+      supabase.from("users").select("id, name, email"),
     ]);
 
     if (ordersRes.error || customersRes.error) {
@@ -51,7 +50,7 @@ export function OrdersManager() {
     const channel = supabase
       .channel("admin-orders")
       .on("postgres_changes", { event: "*", schema: "public", table: "orders" }, () => void fetchOrders())
-      .on("postgres_changes", { event: "*", schema: "public", table: "customers" }, () => void fetchOrders())
+      .on("postgres_changes", { event: "*", schema: "public", table: "users" }, () => void fetchOrders())
       .subscribe();
 
     return () => {
@@ -102,7 +101,7 @@ export function OrdersManager() {
               <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{order.id.slice(0, 8)}</td>
                 <td className="px-4 py-3 text-[var(--text)]">
-                  {customerMap.get(order.customer_id)?.name || customerMap.get(order.customer_id)?.email || order.customer_id.slice(0, 8)}
+                  {customerMap.get(order.user_id)?.name || customerMap.get(order.user_id)?.email || order.user_id.slice(0, 8)}
                 </td>
                 <td className="px-4 py-3">
                   <select
@@ -117,7 +116,7 @@ export function OrdersManager() {
                     ))}
                   </select>
                 </td>
-                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.order_date)}</td>
+                <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.created_at)}</td>
                 <td className="px-4 py-3 text-[var(--text)]">{formatCurrency(order.total_price)}</td>
               </tr>
             ))}
