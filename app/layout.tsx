@@ -1,9 +1,11 @@
 
+import type { Metadata } from "next";
 import "./globals.css";
+import { AppProviders } from "@/components/providers/app-providers";
 
-export const metadata = {
-  title: "Store System",
-  description: "Simple Store",
+export const metadata: Metadata = {
+  title: "My Store",
+  description: "My Store e-commerce platform",
 };
 
 export default function RootLayout({
@@ -12,9 +14,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <body>
+        <AppProviders>{children}</AppProviders>
+      </body>
     </html>
   );
 }
-

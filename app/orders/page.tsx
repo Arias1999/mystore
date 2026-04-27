@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Navbar from "../components/Navbar";
 
 type OrderItem = { name: string; price: number; qty: number };
 type Order = { id: number; items: OrderItem[]; total: number; date: string };
@@ -16,17 +17,7 @@ export default function OrdersPage() {
 
   return (
     <div style={{ minHeight: "100vh", background: "#f0fdf4", fontFamily: "'Segoe UI', sans-serif" }}>
-
-      {/* NAVBAR */}
-      <nav style={styles.navbar}>
-        <span style={styles.logo}>🛒 LYRA'S STORE</span>
-        <div style={{ display: "flex", gap: "4px" }}>
-          <button onClick={() => router.push("/")} style={styles.navBtn}>Home</button>
-          <button onClick={() => router.push("/about")} style={styles.navBtn}>About</button>
-          <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
-        </div>
-        <button onClick={() => router.push("/login")} style={styles.loginBtn}>Login</button>
-      </nav>
+      <Navbar />
 
       <div style={{ maxWidth: "720px", margin: "40px auto", padding: "0 20px" }}>
 
@@ -87,21 +78,6 @@ export default function OrdersPage() {
 }
 
 const styles = {
-  navbar: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    padding: "14px 36px", background: "#15803d",
-    position: "sticky" as const, top: 0, zIndex: 10,
-    boxShadow: "0 2px 12px rgba(21,128,61,0.3)",
-  },
-  logo: { color: "white", fontSize: "20px", fontWeight: 900 },
-  navBtn: {
-    background: "transparent", border: "none", color: "rgba(255,255,255,0.9)",
-    cursor: "pointer", fontSize: "14px", fontWeight: 600, padding: "7px 14px", borderRadius: "8px",
-  },
-  loginBtn: {
-    padding: "8px 22px", background: "white", color: "#15803d",
-    border: "none", borderRadius: "20px", cursor: "pointer", fontWeight: 800, fontSize: "14px",
-  },
   backBtn: {
     background: "transparent", border: "none", color: "#15803d",
     cursor: "pointer", fontSize: "14px", fontWeight: 700, padding: 0,

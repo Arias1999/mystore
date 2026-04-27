@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import Navbar from "../components/Navbar";
 
 type Product = { name: string; price: number; img: string; category: string; qty?: number };
 
@@ -18,6 +19,12 @@ const productsData: Product[] = [
   { name: "Vinegar", price: 15, img: "/products/vinegar.webp", category: "Others" },
   { name: "Magic Sarap", price: 5, img: "/products/magic-sarap.webp", category: "Others" },
   { name: "Vetsin", price: 5, img: "/products/vetsin.jpg", category: "Others" },
+  { name: "Cornstarch", price: 15, img: "/products/cornstarch.jpg", category: "Others" },
+  { name: "Patis", price: 20, img: "/products/patis.jpg", category: "Others" },
+  { name: "Sinigang Mix", price: 12, img: "/products/sinigang.jpg", category: "Others" },
+  { name: "Sarsaya Oyster Sauce", price: 25, img: "/products/sarsaya.jpg", category: "Others" },
+  { name: "Knorr", price: 10, img: "/products/knorr.jpg", category: "Others" },
+  { name: "Paminta", price: 8, img: "/products/paminta.jpg", category: "Others" },
 ];
 
 const productRoutes: { [key: string]: string } = {
@@ -27,14 +34,18 @@ const productRoutes: { [key: string]: string } = {
   "Shampoo": "/products/shampoo", "Biscuits": "/products/biscuits",
   "Salt": "/products/salt", "Vinegar": "/products/venigar",
   "Magic Sarap": "/products/magic-sarap", "Vetsin": "/products/vetsin",
+  "Cornstarch": "/products/cornstarch", "Patis": "/products/patis",
+  "Sinigang Mix": "/products/sinigang", "Sarsaya Oyster Sauce": "/products/sarsaya",
+  "Knorr": "/products/knorr", "Paminta": "/products/paminta",
 };
 
 const categories = ["All", ...Array.from(new Set(productsData.map((p) => p.category)))];
 
 export default function Products() {
-  const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const search = searchParams.get("search") || "";
 
   const filtered = productsData.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -45,19 +56,7 @@ export default function Products() {
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4" }}>
 
-      {/* NAVBAR */}
-      <nav style={styles.navbar}>
-        <span style={styles.logo}>🛒 LYRA'S STORE</span>
-        <div style={{ display: "flex", gap: "4px" }}>
-          <button onClick={() => router.push("/")} style={styles.navBtn}>Home</button>
-          <button onClick={() => router.push("/about")} style={styles.navBtn}>About</button>
-          <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
-        </div>
-        <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-          <button onClick={() => router.push("/orders")} style={styles.ordersBtn}>📦 My Orders</button>
-          <button onClick={() => router.push("/login")} style={styles.loginBtn}>Login</button>
-        </div>
-      </nav>
+      <Navbar />
 
       <div style={{ padding: "28px 36px" }}>
         {/* HEADER */}
@@ -70,8 +69,8 @@ export default function Products() {
         <input
           type="text"
           placeholder="🔍  Search products..."
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          defaultValue={search}
+          onChange={(e) => router.push(`/products?search=${encodeURIComponent(e.target.value)}`)}
           style={styles.search}
         />
 
@@ -121,25 +120,6 @@ export default function Products() {
 }
 
 const styles = {
-  navbar: {
-    display: "flex", alignItems: "center", justifyContent: "space-between",
-    padding: "14px 36px", background: "#15803d",
-    position: "sticky" as const, top: 0, zIndex: 10,
-    boxShadow: "0 2px 12px rgba(21,128,61,0.3)",
-  },
-  logo: { color: "white", fontSize: "20px", fontWeight: 900 },
-  navBtn: {
-    background: "transparent", border: "none", color: "rgba(255,255,255,0.9)",
-    cursor: "pointer", fontSize: "14px", fontWeight: 600, padding: "7px 14px", borderRadius: "8px",
-  },
-  ordersBtn: {
-    padding: "8px 16px", background: "rgba(255,255,255,0.15)", color: "white",
-    border: "1px solid rgba(255,255,255,0.4)", borderRadius: "20px", cursor: "pointer", fontWeight: 700, fontSize: "13px",
-  },
-  loginBtn: {
-    padding: "8px 22px", background: "white", color: "#15803d",
-    border: "none", borderRadius: "20px", cursor: "pointer", fontWeight: 800, fontSize: "14px",
-  },
   search: {
     width: "100%", padding: "13px 22px", borderRadius: "30px",
     border: "2px solid #bbf7d0", fontSize: "15px", outline: "none",
