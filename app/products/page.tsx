@@ -4,7 +4,8 @@ import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../components/Navbar";
 
-type Product = { name: string; price: number; img: string; category: string; qty?: number };
+type Product = { name: string; price: number; img: string; category: string };
+type CartItem = Product & { qty: number };
 
 const productsData: Product[] = [
   { name: "Milk", price: 50, img: "/products/milk.jpg", category: "Dairy" },
@@ -50,8 +51,19 @@ const productRoutes: { [key: string]: string } = {
 
 const categories = ["All", ...Array.from(new Set(productsData.map((p) => p.category)))];
 
+function getCart(): CartItem[] {
+  try { return JSON.parse(localStorage.getItem("cart") || "[]"); } catch { return []; }
+}
+
+function saveCart(cart: CartItem[]) {
+  localStorage.setItem("cart", JSON.stringify(cart));
+  window.dispatchEvent(new Event("storage"));
+}
+
 function ProductsContent() {
   const [activeCategory, setActiveCategory] = useState("All");
+  const [qty, setQty] = useState<{ [key: number]: number }>({});
+  const [added, setAdded] = useState<{ [key: number]: boolean }>({});
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
@@ -61,6 +73,16 @@ function ProductsContent() {
     const matchCategory = activeCategory === "All" || p.category === activeCategory;
     return matchSearch && matchCategory;
   });
+
+  const addToCart = (p: Product, i: number) => {
+    const cart = getCart();
+    const quantity = qty[i] || 1;
+    const idx = cart.findIndex((c) => c.name === p.name);
+    if (idx !== -1) { cart[idx].qty += quantity; } else { cart.push({ ...p, qty: quantity }); }
+    saveCart(cart);
+    setAdded((a) => ({ ...a, [i]: true }));
+    setTimeout(() => setAdded((a) => ({ ...a, [i]: false })), 1500);
+  };
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4" }}>
@@ -112,6 +134,14 @@ function ProductsContent() {
               <div style={styles.cardBody}>
                 <h3 style={styles.cardName}>{p.name}</h3>
                 <p style={styles.price}>PHP {p.price}</p>
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "10px" }}>
+                  <button onClick={() => setQty((q) => ({ ...q, [i]: Math.max(1, (q[i] || 1) - 1) }))} style={styles.qtyBtn}>−</button>
+                  <span style={{ fontWeight: 700, fontSize: "14px", minWidth: "24px", textAlign: "center" }}>{qty[i] || 1}</span>
+                  <button onClick={() => setQty((q) => ({ ...q, [i]: (q[i] || 1) + 1 }))} style={styles.qtyBtn}>+</button>
+                </div>
+                <button onClick={() => addToCart(p, i)} style={{ ...styles.addBtn, background: added[i] ? "#16a34a" : "#15803d" }}>
+                  {added[i] ? "✅ Added!" : "🛒 Add to Cart"}
+                </button>
                 <button onClick={() => router.push(productRoutes[p.name])} style={styles.viewBtn}>
                   View Product
                 </button>
@@ -181,13 +211,40 @@ const styles = {
   cardBody: { padding: "14px", textAlign: "center" as const },
   cardName: { margin: "0 0 4px", fontSize: "16px", fontWeight: 800, color: "#0f172a" },
   price: { margin: "0 0 12px", color: "#15803d", fontWeight: 800, fontSize: "17px" },
+  qtyBtn: {
+    width: "28px",
+    height: "28px",
+    borderRadius: "8px",
+    border: "1.5px solid #bbf7d0",
+    background: "#f0fdf4",
+    color: "#15803d",
+    cursor: "pointer",
+    fontWeight: 900,
+    fontSize: "16px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  addBtn: {
+    display: "block",
+    width: "100%",
+    padding: "9px",
+    color: "white",
+    border: "none",
+    borderRadius: "10px",
+    cursor: "pointer",
+    fontWeight: 700,
+    fontSize: "13px",
+    marginBottom: "6px",
+    transition: "background 0.3s",
+  },
   viewBtn: {
     display: "block",
     width: "100%",
     padding: "9px",
-    background: "#15803d",
-    color: "white",
-    border: "none",
+    background: "white",
+    color: "#15803d",
+    border: "1.5px solid #bbf7d0",
     borderRadius: "10px",
     cursor: "pointer",
     fontWeight: 700,

@@ -34,7 +34,7 @@ export default function LoginPage() {
     } else if (role === "moderator") {
       router.replace("/admin/orders");
     } else {
-      router.replace("/orders");
+      router.replace("/products");
     }
   };
 
