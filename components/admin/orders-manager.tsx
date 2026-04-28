@@ -10,6 +10,7 @@ import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
 type Customer = { id: string; name: string | null; email: string };
+type Order = Database["public"]["Tables"]["orders"]["Row"];
 
 const statuses: Array<Order["status"]> = ["Pending", "Delivered", "Cancelled"];
 const PAGE_SIZE = 10;

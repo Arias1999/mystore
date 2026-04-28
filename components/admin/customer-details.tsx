@@ -8,7 +8,7 @@ import { LoadingState } from "@/components/admin/loading-state";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
-type Customer = Database["public"]["Tables"]["customers"]["Row"];
+type Customer = { id: string; name: string | null; email: string; created_at: string };
 type Order = Database["public"]["Tables"]["orders"]["Row"];
 
 export function CustomerDetails({ customerId }: { customerId: string }) {
@@ -74,7 +74,7 @@ export function CustomerDetails({ customerId }: { customerId: string }) {
         </div>
         <div className="rounded-lg border border-[var(--line)] bg-[var(--surface)] p-4">
           <p className="text-xs text-[var(--text-muted)]">Phone</p>
-          <p className="mt-1 text-sm font-medium text-[var(--text)]">{customer.phone || "-"}</p>
+          <p className="mt-1 text-sm font-medium text-[var(--text)]">-</p>
         </div>
       </div>
 

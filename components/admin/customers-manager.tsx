@@ -9,7 +9,7 @@ import { Pagination } from "@/components/admin/pagination";
 import { formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
-type Customer = Database["public"]["Tables"]["customers"]["Row"];
+type Customer = { id: string; name: string | null; email: string; created_at: string };
 
 const PAGE_SIZE = 10;
 
@@ -102,8 +102,8 @@ export function CustomersManager() {
               <tr key={customer.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{customer.name ?? "No name"}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{customer.email}</td>
-                <td className="px-4 py-3 text-[var(--text-muted)]">{customer.phone || "-"}</td>
-                <td className="px-4 py-3 text-[var(--text)]">{customer.total_orders}</td>
+                <td className="px-4 py-3 text-[var(--text-muted)]">-</td>
+                <td className="px-4 py-3 text-[var(--text)]">-</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(customer.created_at)}</td>
                 <td className="px-4 py-3">
                   <Link
