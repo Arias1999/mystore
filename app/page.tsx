@@ -11,7 +11,6 @@ const products = [
   { name: "Eggs", img: "/products/eggs.jpg", category: "Fresh Produce", description: "Farm-fresh eggs packed with protein and nutrients. Perfect for breakfast, baking, and everyday cooking. Sourced from healthy and well-fed chickens." },
   { name: "Toothpaste", img: "/products/toothpaste.jpg", category: "Personal Care", description: "Protects your teeth from cavities and keeps breath fresh. Formulated for strong enamel and healthy gums. Trusted by families for daily oral care." },
   { name: "Shampoo", img: "/products/shampoo.jpg", category: "Personal Care", description: "Nourishes and strengthens your hair from root to tip. Leaves hair smooth, shiny, and manageable every day. Available in variants for all hair types." },
-  { name: "Biscuits", img: "/products/biscuits.jpg", category: "Snacks", description: "Crispy and delicious biscuits perfect for snacking anytime. Made with quality ingredients for a satisfying crunch. Great for kids and adults alike." },
 ];
 
 export default function Home() {
