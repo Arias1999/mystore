@@ -20,12 +20,6 @@ const productsData: Product[] = [
   { name: "Vinegar", price: 15, img: "/products/Vinegar.webp", category: "Others" },
   { name: "Magic Sarap", price: 5, img: "/products/magic-sarap.webp", category: "Others" },
   { name: "Vetsin", price: 5, img: "/products/vetsin.jpg", category: "Others" },
-  { name: "Cornstarch", price: 15, img: "/products/cornstarch.jpg", category: "Others" },
-  { name: "Patis", price: 20, img: "/products/patis.jpg", category: "Others" },
-  { name: "Sinigang Mix", price: 12, img: "/products/sinigang.jpg", category: "Others" },
-  { name: "Sarsaya Oyster Sauce", price: 25, img: "/products/sarsaya.jpg", category: "Others" },
-  { name: "Knorr", price: 10, img: "/products/knorr.jpg", category: "Others" },
-  { name: "Paminta", price: 8, img: "/products/paminta.jpg", category: "Others" },
 ];
 
 const productRoutes: { [key: string]: string } = {
@@ -93,14 +87,6 @@ function ProductsContent() {
           <p style={{ margin: 0, color: "#4ade80", fontSize: "14px", fontWeight: 600 }}>Browse and shop our fresh selections</p>
         </div>
 
-        <input
-          type="text"
-          placeholder="Search products..."
-          defaultValue={search}
-          onChange={(e) => router.push(`/products?search=${encodeURIComponent(e.target.value)}`)}
-          style={styles.search}
-        />
-
         <div style={styles.filters}>
           {categories.map((cat) => (
             <button
@@ -163,19 +149,6 @@ export default function Products() {
 }
 
 const styles = {
-  search: {
-    width: "100%",
-    padding: "13px 22px",
-    borderRadius: "30px",
-    border: "2px solid #bbf7d0",
-    fontSize: "15px",
-    outline: "none",
-    marginBottom: "16px",
-    boxSizing: "border-box" as const,
-    background: "white",
-    color: "#0f172a",
-    boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
-  },
   filters: { display: "flex", flexWrap: "wrap" as const, gap: "10px", marginBottom: "24px" },
   filterBtn: {
     padding: "8px 20px",

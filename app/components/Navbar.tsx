@@ -68,6 +68,7 @@ export default function Navbar() {
           <button onClick={() => router.push("/")} style={styles.navBtn}>Home</button>
           <button onClick={() => router.push("/about")} style={styles.navBtn}>About</button>
           <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
+          {user && <button onClick={() => router.push("/orders")} style={styles.navBtn}>My Orders</button>}
         </div>
         <form onSubmit={(e) => { e.preventDefault(); if (search.trim()) router.push(`/products?search=${encodeURIComponent(search)}`); }} style={{ display: "flex", alignItems: "center" }}>
           <input
