@@ -1,18 +1,26 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Navbar from "../components/Navbar";
 
 export default function ContactPage() {
   const supabase = createClient();
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    message: "",
-  });
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => {
+      if (data.user) {
+        setForm((prev) => ({
+          ...prev,
+          name: data.user.user_metadata?.name || "",
+          email: data.user.email || "",
+        }));
+      }
+    });
+  }, []);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();

@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 type OrderItem = { name: string; price: number; qty: number };
 type Order = { id: string; items: OrderItem[]; total: number; payment: string; status: string; created_at: string };
 type Message = { id: string; sender_role: string; message: string; created_at: string };
+type UserInfo = { name: string; email: string; phone: string };
 
 const statusStyle: Record<string, { background: string; color: string; label: string }> = {
   Pending:  { background: "#fefce8", color: "#854d0e", label: "⏳ Pending" },
@@ -24,11 +25,24 @@ export default function OrdersPage() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMsg, setNewMsg] = useState("");
   const [sending, setSending] = useState(false);
+  const [userInfo, setUserInfo] = useState<UserInfo | null>(null);
   const msgEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     fetchOrders();
+    fetchUserInfo();
   }, []);
+
+  const fetchUserInfo = async () => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      setUserInfo({
+        name: user.user_metadata?.name || "",
+        email: user.email || "",
+        phone: user.user_metadata?.phone || "",
+      });
+    }
+  };
 
   useEffect(() => {
     msgEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -52,6 +66,9 @@ export default function OrdersPage() {
       .eq("order_id", orderId)
       .order("created_at", { ascending: true });
     setMessages(data ?? []);
+    if (userInfo) {
+      setNewMsg(`Name: ${userInfo.name}\nEmail: ${userInfo.email}${userInfo.phone ? `\nPhone: ${userInfo.phone}` : ""}\n\n`);
+    }
 
     supabase.channel(`messages-${orderId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "order_messages", filter: `order_id=eq.${orderId}` },
@@ -133,7 +150,16 @@ export default function OrdersPage() {
         <div style={{ position: "fixed", inset: 0, background: "rgba(0,0,0,0.5)", zIndex: 500, display: "flex", alignItems: "center", justifyContent: "center", padding: "20px" }}>
           <div style={{ background: "white", borderRadius: "20px", width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", maxHeight: "80vh", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
             <div style={{ padding: "18px 20px", borderBottom: "1px solid #f0fdf4", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f0fdf4", borderRadius: "20px 20px 0 0" }}>
-              <span style={{ fontWeight: 900, color: "#14532d", fontSize: "16px" }}>💬 Message Admin</span>
+              <div>
+                <span style={{ fontWeight: 900, color: "#14532d", fontSize: "16px" }}>💬 Message Admin</span>
+                {userInfo && (
+                  <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "2px" }}>
+                    <span style={{ fontSize: "12px", color: "#374151", fontWeight: 700 }}>👤 {userInfo.name}</span>
+                    <span style={{ fontSize: "12px", color: "#64748b" }}>✉️ {userInfo.email}</span>
+                    {userInfo.phone && <span style={{ fontSize: "12px", color: "#64748b" }}>📞 {userInfo.phone}</span>}
+                  </div>
+                )}
+              </div>
               <button onClick={() => setActiveOrder(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>✕</button>
             </div>
             <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -156,12 +182,13 @@ export default function OrdersPage() {
               <div ref={msgEndRef} />
             </div>
             <div style={{ padding: "14px 16px", borderTop: "1px solid #f0fdf4", display: "flex", gap: "10px" }}>
-              <input
+              <textarea
                 value={newMsg}
                 onChange={(e) => setNewMsg(e.target.value)}
-                onKeyDown={(e) => { if (e.key === "Enter") sendMessage(); }}
+                onKeyDown={(e) => { if (e.key === "Enter" && e.ctrlKey) sendMessage(); }}
                 placeholder="Type a message..."
-                style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #bbf7d0", fontSize: "14px", outline: "none" }}
+                rows={3}
+                style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #bbf7d0", fontSize: "14px", outline: "none", resize: "none" }}
               />
               <button onClick={sendMessage} disabled={sending || !newMsg.trim()} style={{ padding: "10px 18px", background: "#15803d", color: "white", border: "none", borderRadius: "12px", cursor: "pointer", fontWeight: 700, fontSize: "14px", opacity: sending ? 0.7 : 1 }}>
                 Send
