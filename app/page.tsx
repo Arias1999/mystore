@@ -1,8 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Navbar from "./components/Navbar";
+import { createClient } from "@/lib/supabase/client";
 
 const products = [
   { name: "Can Goods", img: "/products/canned.jpg", category: "Canned Food", description: "Includes sardines, meat loaf, beef loaf, carne norte, corned beef, tuna, and more. Perfect for quick and easy everyday meals. Long shelf life and packed with flavor." },
@@ -17,7 +18,19 @@ export default function Home() {
   const router = useRouter();
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const categories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data }) => {
+      setIsLoggedIn(!!data.user);
+    });
+  }, []);
+
+  const handleShop = (path: string) => {
+    router.push(isLoggedIn ? path : "/login");
+  };
 
   const filtered = products.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());
@@ -57,7 +70,7 @@ export default function Home() {
               <span style={{ ...styles.badge, background: "#fff7ed", color: "#ea580c", border: "1px solid #fed7aa" }}>🍪 SNACKS</span>
               <h3 style={styles.featuredTitle}>Biscuits & Snacks</h3>
               <p style={styles.featuredDesc}>Crispy and delicious biscuits perfect for snacking anytime. Skyflakes, Oreo, Chips Ahoy, and more!</p>
-              <button onClick={() => router.push("/login")} style={styles.orderBtn}
+              <button onClick={() => handleShop("/products/biscuits")} style={styles.orderBtn}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#c2410c"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#ea580c"; }}
               >Shop Now →</button>
@@ -74,7 +87,7 @@ export default function Home() {
               <span style={{ ...styles.badge, background: "#f0fdf4", color: "#15803d", border: "1px solid #bbf7d0" }}>🥫 CANNED FOOD</span>
               <h3 style={styles.featuredTitle}>Can Goods</h3>
               <p style={styles.featuredDesc}>Sardines, meat loaf, beef loaf, carne norte, corned beef, tuna, and more. Quick and easy everyday meals!</p>
-              <button onClick={() => router.push("/login")} style={{ ...styles.orderBtn, background: "#15803d", boxShadow: "0 4px 14px rgba(21,128,61,0.35)" }}
+              <button onClick={() => handleShop("/products/can-goods")} style={{ ...styles.orderBtn, background: "#15803d", boxShadow: "0 4px 14px rgba(21,128,61,0.35)" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#14532d"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#15803d"; }}
               >Shop Now →</button>
@@ -91,7 +104,7 @@ export default function Home() {
               <span style={{ ...styles.badge, background: "#eff6ff", color: "#2563eb", border: "1px solid #bfdbfe" }}>🥛 DAIRY</span>
               <h3 style={styles.featuredTitle}>Milk & Drinks</h3>
               <p style={styles.featuredDesc}>Milo, Bear Brand, Alaska, Energen, Nescafe, Tablea and more. Fresh and nutritious drinks for the whole family!</p>
-              <button onClick={() => router.push("/login")} style={{ ...styles.orderBtn, background: "#2563eb", boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}
+              <button onClick={() => handleShop("/products/milk")} style={{ ...styles.orderBtn, background: "#2563eb", boxShadow: "0 4px 14px rgba(37,99,235,0.35)" }}
                 onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#1d4ed8"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.background = "#2563eb"; }}
               >Shop Now →</button>
@@ -120,7 +133,7 @@ export default function Home() {
           <div
             key={i}
             style={styles.card}
-            onClick={() => router.push("/login")}
+            onClick={() => handleShop("/products")}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLDivElement).style.transform = "translateY(-6px)";
               (e.currentTarget as HTMLDivElement).style.boxShadow = "0 16px 32px rgba(22,163,74,0.18)";
