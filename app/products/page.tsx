@@ -9,7 +9,7 @@ type CartItem = Product & { qty: number };
 
 const productsData: Product[] = [
   { name: "Milk", price: 50, img: "/products/milk.jpg", category: "Dairy" },
-  { name: "Can Goods", price: 30, img: "/products/canned.jpg", category: "Canned Food" },
+  { name: "Sardines", price: 30, img: "/products/canned.jpg", category: "Canned Food" },
   { name: "Bath Soap", price: 25, img: "/products/bath-soap.jpg", category: "Personal Care" },
   { name: "Laundry Soap", price: 20, img: "/products/laundry-soap.jpg", category: "Personal Care" },
   { name: "Eggs", price: 10, img: "/products/eggs.jpg", category: "Fresh Produce" },
@@ -24,6 +24,7 @@ const productsData: Product[] = [
 
 const productRoutes: { [key: string]: string } = {
   Milk: "/products/milk",
+  Sardines: "/products/can-goods",
   "Can Goods": "/products/can-goods",
   "Bath Soap": "/products/bath-soap",
   "Laundry Soap": "/products/laundry-soap",
@@ -68,15 +69,7 @@ function ProductsContent() {
     return matchSearch && matchCategory;
   });
 
-  const addToCart = (p: Product, i: number) => {
-    const cart = getCart();
-    const quantity = qty[i] || 1;
-    const idx = cart.findIndex((c) => c.name === p.name);
-    if (idx !== -1) { cart[idx].qty += quantity; } else { cart.push({ ...p, qty: quantity }); }
-    saveCart(cart);
-    setAdded((a) => ({ ...a, [i]: true }));
-    setTimeout(() => setAdded((a) => ({ ...a, [i]: false })), 1500);
-  };
+  
 
   return (
     <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4" }}>
@@ -120,14 +113,6 @@ function ProductsContent() {
               <div style={styles.cardBody}>
                 <h3 style={styles.cardName}>{p.name}</h3>
                 <p style={styles.price}>PHP {p.price}</p>
-                <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: "8px", marginBottom: "10px" }}>
-                  <button onClick={() => setQty((q) => ({ ...q, [i]: Math.max(1, (q[i] || 1) - 1) }))} style={styles.qtyBtn}>−</button>
-                  <span style={{ fontWeight: 700, fontSize: "14px", minWidth: "24px", textAlign: "center" }}>{qty[i] || 1}</span>
-                  <button onClick={() => setQty((q) => ({ ...q, [i]: (q[i] || 1) + 1 }))} style={styles.qtyBtn}>+</button>
-                </div>
-                <button onClick={() => addToCart(p, i)} style={{ ...styles.addBtn, background: added[i] ? "#16a34a" : "#15803d" }}>
-                  {added[i] ? "✅ Added!" : "🛒 Add to Cart"}
-                </button>
                 <button onClick={() => router.push(productRoutes[p.name])} style={styles.viewBtn}>
                   View Product
                 </button>

@@ -1,15 +1,10 @@
 import ProductPage from "../ProductPageTemplate";
 
 const items = [
-  { name: "Colgate", price: 35, img: "/products/toothpaste.jpg" },
-  { name: "Close Up", price: 30, img: "/products/toothpaste.jpg" },
-  { name: "Hapee", price: 25, img: "/products/toothpaste.jpg" },
-  { name: "Sensodyne", price: 55, img: "/products/toothpaste.jpg" },
-  { name: "Pepsodent", price: 28, img: "/products/toothpaste.jpg" },
-  { name: "Oral-B", price: 48, img: "/products/toothpaste.jpg" },
-  { name: "Darlie", price: 32, img: "/products/toothpaste.jpg" },
-  { name: "Arm & Hammer", price: 60, img: "/products/toothpaste.jpg" },
-  { name: "Maxam", price: 20, img: "/products/toothpaste.jpg" },
+  { name: "Colgate", price: 10, img: "/products/colgate.jpg" },
+  { name: "Close Up", price: 10, img: "/products/closse-up.webp" },
+  { name: "Hapee", price: 10, img: "/products/hapee.webp" },
+  { name: "Sensodyne", price: 25, img: "/products/sensodyne.jpg" },
 ];
 
 export default function ToothpastePage() {
