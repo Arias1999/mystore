@@ -1,13 +1,15 @@
 import ProductPage from "../ProductPageTemplate";
 
 const items = [
-  { name: "Head & Shoulders", price: 45, img: "/products/shampoo.jpg" },
-  { name: "Pantene", price: 42, img: "/products/shampoo.jpg" },
-  { name: "Sunsilk", price: 38, img: "/products/shampoo.jpg" },
-  { name: "Rejoice", price: 35, img: "/products/shampoo.jpg" },
-  { name: "Palmolive", price: 38, img: "/products/shampoo.jpg" },
-  { name: "Keratin Empress", price: 55, img: "/products/shampoo.jpg" },
-  { name: "Dove", price: 48, img: "/products/shampoo.jpg" },
+  { name: "Head & Shoulders", price: 8, img: "/products/head-shoulders.jpg" },
+  { name: "Pantene", price: 42, img: "/products/panteen.jpg" },
+  { name: "Sunsilk-green", price: 8, img: "/products/sunslik-green.jpg" },
+  { name: "Rejoice", price: 8, img: "/products/rejoice.webp" },
+  { name: "Palmolive", price: 8, img: "/products/palmolive.jpg" },
+  { name: "Keratin Empress", price: 10, img: "/products/keratin.jpg" },
+  { name: "Sunsilk-orange", price: 8, img: "/products/sunsilk-orange.jpg" },
+  { name: "Sunsilk-pink", price: 8, img: "/products/sunsilk-pink.jpg" },
+  { name: "Dove", price: 8, img: "/products/dove.jpg" },
 ];
 
 export default function ShampooPage() {

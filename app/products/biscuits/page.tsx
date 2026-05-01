@@ -1,15 +1,15 @@
 import ProductPage from "../ProductPageTemplate";
 
 const items = [
-  { name: "Skyflakes", price: 15, img: "/products/biscuits.jpg" },
-  { name: "Rebisco", price: 12, img: "/products/biscuits.jpg" },
-  { name: "Fita", price: 14, img: "/products/biscuits.jpg" },
-  { name: "Hansel", price: 13, img: "/products/biscuits.jpg" },
-  { name: "Bingo", price: 12, img: "/products/biscuits.jpg" },
-  { name: "CalCheese", price: 18, img: "/products/biscuits.jpg" },
-  { name: "Cream-O", price: 15, img: "/products/biscuits.jpg" },
-  { name: "Chips Ahoy", price: 35, img: "/products/biscuits.jpg" },
-  { name: "Oreo", price: 30, img: "/products/biscuits.jpg" },
+  { name: "Skyflakes", price: 15, img: "/products/skyflakes.jpg" },
+  { name: "Rebisco", price: 12, img: "/products/rebisco.webp" },
+  { name: "Fita", price: 14, img: "/products/fita.jpg" },
+  { name: "Hansel", price: 13, img: "/products/hansel.jpg" },
+  { name: "Bingo", price: 12, img: "/products/bingo.jpg" },
+  { name: "CalCheese", price: 18, img: "/products/cheese.webp" },
+  { name: "Cream-O", price: 15, img: "/products/cream.jpg" },
+ 
+  { name: "Oreo", price: 30, img: "/products/oreo.jpg" },
 ];
 
 export default function BiscuitsPage() {
