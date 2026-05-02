@@ -7,6 +7,7 @@ import type { User } from "@supabase/supabase-js";
 
 export default function Navbar() {
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [user, setUser] = useState<User | null>(null);
   const [profileOpen, setProfileOpen] = useState(false);
   const [cartCount, setCartCount] = useState(0);
@@ -15,6 +16,7 @@ export default function Navbar() {
   const [search, setSearch] = useState("");
 
   useEffect(() => {
+    setMounted(true);
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => {
       setUser(data.user ?? null);
@@ -50,6 +52,8 @@ export default function Navbar() {
   };
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+
+  if (!mounted) return <nav style={{ ...styles.navbar, minHeight: 56 }} />;
 
   const placeOrder = async () => {
     if (cart.length === 0) { alert("Please add items to cart first."); return; }

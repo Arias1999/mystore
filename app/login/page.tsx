@@ -2,21 +2,18 @@
 
 export const dynamic = "force-dynamic";
 
-import { Suspense, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
-function LoginForm() {
+export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const verified = searchParams.get("verified") === "1";
 
   const handleLogin = async () => {
     setError("");
@@ -39,7 +36,6 @@ function LoginForm() {
     }
 
     const role = data.user.user_metadata?.role || "customer";
-
     if (role === "admin" || role === "moderator") {
       router.replace("/admin/dashboard");
     } else {
@@ -65,15 +61,9 @@ function LoginForm() {
             <p style={styles.sub}>Sign in to continue shopping</p>
           </div>
 
-          {verified && (
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "#dcfce7", border: "1px solid #bbf7d0", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px", color: "#166534", fontSize: "14px", fontWeight: 600 }}>
-              ✅ Email verified! You can now log in.
-            </div>
-          )}
-
           {error && (
             <div style={styles.errorBox}>
-              <span style={{ fontSize: "16px" }}>⚠️</span>
+              <span>⚠️</span>
               <span>{error}</span>
             </div>
           )}
@@ -85,8 +75,6 @@ function LoginForm() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             style={styles.input}
-            onFocus={(e) => (e.currentTarget.style.borderColor = "#15803d")}
-            onBlur={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
           />
 
           <label style={styles.label}>Password</label>
@@ -97,8 +85,6 @@ function LoginForm() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               style={{ ...styles.input, paddingRight: "44px" }}
-              onFocus={(e) => (e.currentTarget.style.borderColor = "#15803d")}
-              onBlur={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
             />
             <button type="button" onClick={() => setShowPassword((v) => !v)} style={styles.eyeBtn}>
               {showPassword ? "🙈" : "👁️"}
@@ -121,14 +107,6 @@ function LoginForm() {
         <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
       </footer>
     </div>
-  );
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   );
 }
 
