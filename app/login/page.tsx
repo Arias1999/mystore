@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
@@ -12,6 +12,8 @@ export default function LoginPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const verified = searchParams.get("verified") === "1";
 
   const handleLogin = async () => {
     setError("");
@@ -33,23 +35,10 @@ export default function LoginPage() {
       return;
     }
 
-    const { data: dbUser, error: dbError } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
+    const role = data.user.user_metadata?.role || 'customer';
 
-    if (dbError || !dbUser) {
-      setError("Account not found. Please contact support.");
-      await supabase.auth.signOut();
-      setLoading(false);
-      return;
-    }
-
-    if (dbUser.role === "admin" || dbUser.role === "moderator") {
+    if (role === "admin" || role === "moderator") {
       router.replace("/admin/dashboard");
-    } else if (dbUser.role === "rider") {
-      router.replace("/admin/orders");
     } else {
       router.replace("/");
     }
@@ -72,6 +61,12 @@ export default function LoginPage() {
             <h2 style={styles.title}>LYRA&apos;S STORE</h2>
             <p style={styles.sub}>Sign in to continue shopping</p>
           </div>
+
+          {verified && (
+            <div style={{ display: "flex", alignItems: "center", gap: "8px", background: "#dcfce7", border: "1px solid #bbf7d0", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px", color: "#166534", fontSize: "14px", fontWeight: 600 }}>
+              ✅ Email verified! You can now log in.
+            </div>
+          )}
 
           {error && (
             <div style={styles.errorBox}>
