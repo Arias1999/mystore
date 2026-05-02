@@ -11,7 +11,7 @@ import { formatDate } from "@/lib/utils";
 type StorefrontOrder = {
   id: string;
   user_id: string;
-  items: { name: string; price: number; qty: number }[];
+  items: { name: string; price: number; qty: number; img?: string }[];
   total: number;
   payment: string;
   status: string;
@@ -195,6 +195,25 @@ export function OrdersManager() {
                 <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_email}</p>
               </div>
               <button onClick={() => setActiveOrder(null)} className="text-[var(--text-muted)] hover:text-[var(--text)]">✕</button>
+            </div>
+
+            {/* Order Items with images */}
+            <div className="border-b border-[var(--line)] px-4 py-3 space-y-2">
+              <p className="text-xs font-semibold text-[var(--text-muted)] uppercase tracking-wide">Items Ordered</p>
+              {activeOrder.items.map((item, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  {item.img ? (
+                    <img src={item.img} alt={item.name} className="h-10 w-10 rounded-lg object-cover border border-[var(--line)]" />
+                  ) : (
+                    <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[var(--surface-soft)] text-lg">📦</div>
+                  )}
+                  <div className="flex-1">
+                    <p className="text-sm font-semibold text-[var(--text)]">{item.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">x{item.qty} · ₱{item.price * item.qty}</p>
+                  </div>
+                </div>
+              ))}
+              <p className="text-right text-sm font-bold text-[var(--text)]">Total: ₱{activeOrder.total}</p>
             </div>
             <div className="flex flex-1 flex-col gap-3 overflow-y-auto p-4">
               {messages.length === 0 && (

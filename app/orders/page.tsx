@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
-type OrderItem = { name: string; price: number; qty: number };
+type OrderItem = { name: string; price: number; qty: number; img?: string };
 type Order = { id: string; items: OrderItem[]; total: number; payment: string; status: string; created_at: string };
 type Message = { id: string; sender_role: string; message: string; created_at: string };
 type UserInfo = { name: string; email: string; phone: string };
@@ -139,7 +139,11 @@ export default function OrdersPage() {
                   {order.items.map((item, i) => (
                     <div key={i} style={styles.itemRow}>
                       <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-                        <div style={styles.itemDot} />
+                        {item.img ? (
+                          <img src={item.img} alt={item.name} style={{ width: "36px", height: "36px", borderRadius: "8px", objectFit: "cover" }} />
+                        ) : (
+                          <div style={styles.itemDot} />
+                        )}
                         <span style={{ fontSize: "14px", fontWeight: 600, color: "#0f172a" }}>{item.name}</span>
                         <span style={styles.qtyBadge}>x{item.qty}</span>
                       </div>
