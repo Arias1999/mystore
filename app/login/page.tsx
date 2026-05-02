@@ -1,11 +1,11 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
-export default function LoginPage() {
+function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -21,7 +21,6 @@ export default function LoginPage() {
     setLoading(true);
 
     const supabase = createClient();
-
     const { data, error: authError } = await supabase.auth.signInWithPassword({
       email: email.trim(),
       password: password.trim(),
@@ -37,25 +36,13 @@ export default function LoginPage() {
       return;
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("users")
-      .select("role")
-      .eq("id", data.user.id)
-      .single();
+    const role = data.user.user_metadata?.role || "customer";
 
-    if (profileError || !profile) {
-      setError("Account not found. Please contact support.");
-      await supabase.auth.signOut();
-      setLoading(false);
-      return;
-    }
-
-    if (profile.role === "admin" || profile.role === "moderator") {
+    if (role === "admin" || role === "moderator") {
       router.replace("/admin/dashboard");
-      return;
+    } else {
+      router.replace("/");
     }
-
-    router.replace("/");
   };
 
   return (
@@ -111,11 +98,7 @@ export default function LoginPage() {
               onFocus={(e) => (e.currentTarget.style.borderColor = "#15803d")}
               onBlur={(e) => (e.currentTarget.style.borderColor = "#e2e8f0")}
             />
-            <button
-              type="button"
-              onClick={() => setShowPassword((v) => !v)}
-              style={styles.eyeBtn}
-            >
+            <button type="button" onClick={() => setShowPassword((v) => !v)} style={styles.eyeBtn}>
               {showPassword ? "🙈" : "👁️"}
             </button>
           </div>
@@ -139,79 +122,24 @@ export default function LoginPage() {
   );
 }
 
+export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
 const styles = {
-  card: {
-    background: "white",
-    borderRadius: "20px",
-    padding: "40px 36px",
-    width: "100%",
-    maxWidth: "400px",
-    boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
-    border: "1px solid #dcfce7",
-  },
-  iconCircle: {
-    width: "64px",
-    height: "64px",
-    borderRadius: "50%",
-    background: "#dcfce7",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
-    fontSize: "28px",
-    margin: "0 auto 12px",
-  },
+  card: { background: "white", borderRadius: "20px", padding: "40px 36px", width: "100%", maxWidth: "400px", boxShadow: "0 8px 32px rgba(0,0,0,0.1)", border: "1px solid #dcfce7" },
+  iconCircle: { width: "64px", height: "64px", borderRadius: "50%", background: "#dcfce7", display: "flex", alignItems: "center", justifyContent: "center", fontSize: "28px", margin: "0 auto 12px" },
   title: { margin: "0 0 4px", fontSize: "22px", fontWeight: 900, color: "#14532d", letterSpacing: "0.5px" },
   sub: { margin: 0, fontSize: "14px", color: "#64748b" },
-  errorBox: {
-    display: "flex",
-    alignItems: "center",
-    gap: "8px",
-    background: "#fef2f2",
-    border: "1px solid #fecaca",
-    borderRadius: "10px",
-    padding: "10px 14px",
-    marginBottom: "14px",
-    color: "#b91c1c",
-    fontSize: "14px",
-    fontWeight: 600,
-  },
+  errorBox: { display: "flex", alignItems: "center", gap: "8px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px", color: "#b91c1c", fontSize: "14px", fontWeight: 600 },
   label: { display: "block", fontSize: "13px", fontWeight: 700, color: "#374151", marginBottom: "6px", marginTop: "14px" },
-  input: {
-    display: "block",
-    width: "100%",
-    padding: "12px 16px",
-    borderRadius: "10px",
-    border: "2px solid #e2e8f0",
-    fontSize: "15px",
-    outline: "none",
-    boxSizing: "border-box" as const,
-    background: "#f8fafc",
-    color: "#0f172a",
-  },
-  eyeBtn: {
-    position: "absolute" as const,
-    right: "12px",
-    top: "50%",
-    transform: "translateY(-50%)",
-    background: "none",
-    border: "none",
-    cursor: "pointer",
-    fontSize: "16px",
-    padding: "2px",
-  },
-  button: {
-    marginTop: "20px",
-    width: "100%",
-    padding: "13px",
-    background: "#15803d",
-    color: "white",
-    border: "none",
-    borderRadius: "12px",
-    fontSize: "16px",
-    fontWeight: 800,
-    cursor: "pointer",
-    boxShadow: "0 4px 12px rgba(21,128,61,0.3)",
-  },
+  input: { display: "block", width: "100%", padding: "12px 16px", borderRadius: "10px", border: "2px solid #e2e8f0", fontSize: "15px", outline: "none", boxSizing: "border-box" as const, background: "#f8fafc", color: "#0f172a" },
+  eyeBtn: { position: "absolute" as const, right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "2px" },
+  button: { marginTop: "20px", width: "100%", padding: "13px", background: "#15803d", color: "white", border: "none", borderRadius: "12px", fontSize: "16px", fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 12px rgba(21,128,61,0.3)" },
   link: { marginTop: "16px", fontSize: "14px", color: "#64748b", cursor: "pointer", textAlign: "center" as const },
   linkSpan: { color: "#15803d", fontWeight: 800 },
   back: { marginTop: "8px", fontSize: "14px", color: "#15803d", fontWeight: 600, cursor: "pointer", textAlign: "center" as const },
