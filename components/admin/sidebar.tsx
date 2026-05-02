@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  BarChart3,
   Bike,
   LayoutDashboard,
   MessageSquare,
@@ -30,7 +29,6 @@ const navItems: Item[] = [
   { href: "/admin/riders", label: "Riders", icon: Bike },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
-  { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
   { href: "/admin/profile", label: "Profile", icon: UserCircle },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
