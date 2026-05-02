@@ -55,6 +55,26 @@ export default function Navbar() {
     if (cart.length === 0) { alert("Please add items to cart first."); return; }
     if (!user) { router.push("/login"); return; }
     const supabase = createClient();
+
+    // Fetch product IDs and current stock by name
+    const names = cart.map((i) => i.name);
+    const { data: products, error: fetchErr } = await supabase
+      .from("products")
+      .select("id, name, stock")
+      .in("name", names);
+
+    if (fetchErr || !products) { alert("Failed to verify stock. Please try again."); return; }
+
+    // Check if enough stock
+    for (const item of cart) {
+      const product = products.find((p) => p.name === item.name);
+      if (product && product.stock < item.qty) {
+        alert(`Sorry, only ${product.stock} left in stock for ${item.name}.`);
+        return;
+      }
+    }
+
+    // Place the order
     const { error } = await supabase.from("storefront_orders").insert({
       user_id: user.id,
       items: cart,
@@ -63,6 +83,18 @@ export default function Navbar() {
       status: "Pending",
     });
     if (error) { alert("Failed to place order. Please try again."); return; }
+
+    // Deduct stock for each item
+    for (const item of cart) {
+      const product = products.find((p) => p.name === item.name);
+      if (product) {
+        await supabase
+          .from("products")
+          .update({ stock: Math.max(0, product.stock - item.qty) })
+          .eq("id", product.id);
+      }
+    }
+
     saveCart([]);
     setCartOpen(false);
     router.push("/orders");
