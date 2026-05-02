@@ -17,8 +17,8 @@ function VerifyForm() {
 
   const handleVerify = async () => {
     setMessage(null);
-    if (otp.trim().length !== 6) {
-      setMessage({ type: "error", text: "Please enter the 6-digit OTP code." });
+    if (otp.trim().length < 6) {
+      setMessage({ type: "error", text: "Please enter the OTP code." });
       return;
     }
 
@@ -73,7 +73,7 @@ function VerifyForm() {
           <div style={{ fontSize: "56px", marginBottom: "12px" }}>📧</div>
           <h1 style={{ margin: "0 0 8px", fontSize: "24px", fontWeight: 900, color: "#14532d" }}>Verify your email</h1>
           <p style={{ margin: 0, fontSize: "14px", color: "#64748b" }}>
-            We sent a 6-digit code to<br />
+            We sent a verification code to<br />
             <strong style={{ color: "#15803d" }}>{email || "your email"}</strong>
           </p>
         </div>
@@ -98,8 +98,8 @@ function VerifyForm() {
           type="text"
           placeholder="000000"
           value={otp}
-          onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          maxLength={6}
+          onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 8))}
+          maxLength={8}
           style={{
             display: "block", width: "100%", padding: "16px",
             borderRadius: "12px", border: "2px solid #e2e8f0",
