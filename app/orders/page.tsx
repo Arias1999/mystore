@@ -65,10 +65,26 @@ export default function OrdersPage() {
       .select("*")
       .eq("order_id", orderId)
       .order("created_at", { ascending: true });
-    setMessages(data ?? []);
-    if (userInfo) {
-      setNewMsg(`Name: ${userInfo.name}\nEmail: ${userInfo.email}${userInfo.phone ? `\nPhone: ${userInfo.phone}` : ""}\n\n`);
+    const existing = data ?? [];
+    setMessages(existing);
+
+    // Auto-send user info if no messages yet
+    if (existing.length === 0 && userInfo) {
+      const autoMsg = `Name: ${userInfo.name}\nEmail: ${userInfo.email}${userInfo.phone ? `\nPhone: ${userInfo.phone}` : ""}`;
+      await supabase.from("order_messages").insert({
+        order_id: orderId,
+        sender_role: "user",
+        message: autoMsg,
+      });
+      const { data: refreshed } = await supabase
+        .from("order_messages")
+        .select("*")
+        .eq("order_id", orderId)
+        .order("created_at", { ascending: true });
+      setMessages(refreshed ?? []);
     }
+
+    setNewMsg("");
 
     supabase.channel(`messages-${orderId}`)
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "order_messages", filter: `order_id=eq.${orderId}` },
