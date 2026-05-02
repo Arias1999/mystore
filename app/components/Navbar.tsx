@@ -51,10 +51,18 @@ export default function Navbar() {
 
   const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
 
-  const placeOrder = () => {
+  const placeOrder = async () => {
     if (cart.length === 0) { alert("Please add items to cart first."); return; }
-    const existing = JSON.parse(localStorage.getItem("orders") || "[]");
-    localStorage.setItem("orders", JSON.stringify([...existing, { id: Date.now(), items: cart, total, date: new Date().toLocaleString() }]));
+    if (!user) { router.push("/login"); return; }
+    const supabase = createClient();
+    const { error } = await supabase.from("storefront_orders").insert({
+      user_id: user.id,
+      items: cart,
+      total,
+      payment: "COD",
+      status: "Pending",
+    });
+    if (error) { alert("Failed to place order. Please try again."); return; }
     saveCart([]);
     setCartOpen(false);
     router.push("/orders");

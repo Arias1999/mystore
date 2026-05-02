@@ -128,8 +128,8 @@ export default function OrdersPage() {
                   <div style={{ display: "flex", alignItems: "center", gap: "8px", flexWrap: "wrap" }}>
                     <span style={styles.orderNum}>Order #{orders.length - idx}</span>
                     <span style={{ ...styles.badge, background: s.background, color: s.color }}>{s.label}</span>
-                    <span style={{ ...styles.badge, background: order.payment === "GCash" ? "#eff6ff" : "#fefce8", color: order.payment === "GCash" ? "#2563eb" : "#854d0e" }}>
-                      {order.payment === "GCash" ? "📱 GCash" : "💵 Cash"}
+                    <span style={{ ...styles.badge, background: "#fefce8", color: "#854d0e" }}>
+                      💵 COD
                     </span>
                   </div>
                   <span style={styles.orderDate}>{new Date(order.created_at).toLocaleString()}</span>
