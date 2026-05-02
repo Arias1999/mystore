@@ -10,7 +10,7 @@ import { LoadingState } from "@/components/admin/loading-state";
 import { ErrorState } from "@/components/admin/error-state";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
-type StorefrontOrder = { id: string; user_id: string; total: number; status: string; created_at: string };
+type StorefrontOrder = { id: string; user_id: string; items: { name: string; price: number; qty: number; img?: string }[]; total: number; status: string; created_at: string };
 
 export function DashboardOverview() {
   const supabase = createClient();
@@ -26,7 +26,7 @@ export function DashboardOverview() {
 
     const [productsRes, ordersRes, customersRes] = await Promise.all([
       supabase.from("products").select("*"),
-      supabase.from("storefront_orders").select("id, user_id, total, status, created_at").order("created_at", { ascending: false }),
+      supabase.from("storefront_orders").select("id, user_id, items, total, status, created_at").order("created_at", { ascending: false }),
       supabase.from("users").select("id, name, email").eq("role", "customer"),
     ]);
 
@@ -149,6 +149,7 @@ export function DashboardOverview() {
           <thead className="border-b border-[var(--line)] bg-[var(--surface-soft)] text-[var(--text-muted)]">
             <tr>
               <th className="px-4 py-3 font-medium">Order ID</th>
+              <th className="px-4 py-3 font-medium">Items</th>
               <th className="px-4 py-3 font-medium">Customer</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Date</th>
@@ -159,6 +160,23 @@ export function DashboardOverview() {
             {recentOrders.map((order) => (
               <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{order.id.slice(0, 8)}</td>
+                <td className="px-4 py-3">
+                  <div className="flex gap-1">
+                    {(order.items as any[]).slice(0, 4).map((item, i) => (
+                      item.img ? (
+                        <img key={i} src={item.img} alt={item.name} title={`${item.name} x${item.qty}`}
+                          className="h-9 w-9 rounded-lg object-cover border border-[var(--line)]" />
+                      ) : (
+                        <div key={i} className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--surface-soft)] text-sm" title={item.name}>📦</div>
+                      )
+                    ))}
+                    {(order.items as any[]).length > 4 && (
+                      <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[var(--surface-soft)] text-xs font-bold text-[var(--text-muted)]">
+                        +{(order.items as any[]).length - 4}
+                      </div>
+                    )}
+                  </div>
+                </td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">
                   {customerMap.get(order.user_id)?.name || customerMap.get(order.user_id)?.email || order.user_id.slice(0, 8)}
                 </td>
@@ -174,7 +192,7 @@ export function DashboardOverview() {
               </tr>
             ))}
             {recentOrders.length === 0 && (
-              <tr><td colSpan={5} className="px-4 py-6 text-center text-[var(--text-muted)]">No orders yet.</td></tr>
+              <tr><td colSpan={6} className="px-4 py-6 text-center text-[var(--text-muted)]">No orders yet.</td></tr>
             )}
           </tbody>
         </table>
