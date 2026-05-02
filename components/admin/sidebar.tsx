@@ -4,10 +4,14 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
   BarChart3,
+  Bike,
   LayoutDashboard,
+  MessageSquare,
   Package,
+  PackageSearch,
   ReceiptText,
   Settings,
+  UserCircle,
   Users,
 } from "lucide-react";
 import { LogoutButton } from "@/components/admin/logout-button";
@@ -21,9 +25,13 @@ type Item = {
 const navItems: Item[] = [
   { href: "/admin/dashboard", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/inventory", label: "Inventory", icon: PackageSearch },
   { href: "/admin/orders", label: "Orders", icon: ReceiptText },
+  { href: "/admin/riders", label: "Riders", icon: Bike },
   { href: "/admin/customers", label: "Customers", icon: Users },
+  { href: "/admin/messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/admin/profile", label: "Profile", icon: UserCircle },
   { href: "/admin/settings", label: "Settings", icon: Settings },
 ];
 

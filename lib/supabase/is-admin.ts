@@ -1,4 +1,4 @@
-export type AppRole = "admin" | "moderator" | "user";
+export type AppRole = "admin" | "moderator" | "customer" | "rider";
 
 type AuthUserLike = {
   user_metadata?: Record<string, unknown>;
@@ -17,7 +17,7 @@ export function getRole(user: AuthUserLike | null | undefined): AppRole {
     normalizeRole(user?.app_metadata?.["role"]);
   if (role === "admin") return "admin";
   if (role === "moderator") return "moderator";
-  return "user";
+  return "customer";
 }
 
 export function isAdminUser(user: AuthUserLike | null | undefined): boolean {

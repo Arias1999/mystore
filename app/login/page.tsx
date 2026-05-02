@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
-import { getRole } from "@/lib/supabase/is-admin";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -19,22 +18,40 @@ export default function LoginPage() {
     setLoading(true);
 
     const supabase = createClient();
-    const { data, error: authError } = await supabase.auth.signInWithPassword({ email, password });
+    const { data, error: authError } = await supabase.auth.signInWithPassword({
+      email: email.trim(),
+      password: password.trim(),
+    });
 
     if (authError || !data.user) {
-      setError(authError?.message || "Invalid email or password.");
+      if (authError?.message.toLowerCase().includes("email not confirmed")) {
+        setError("Email not confirmed. Please check your inbox.");
+      } else {
+        setError("Invalid email or password.");
+      }
       setLoading(false);
       return;
     }
 
-    const role = getRole(data.user);
+    const { data: dbUser, error: dbError } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", data.user.id)
+      .single();
 
-    if (role === "admin") {
+    if (dbError || !dbUser) {
+      setError("Account not found. Please contact support.");
+      await supabase.auth.signOut();
+      setLoading(false);
+      return;
+    }
+
+    if (dbUser.role === "admin" || dbUser.role === "moderator") {
       router.replace("/admin/dashboard");
-    } else if (role === "moderator") {
+    } else if (dbUser.role === "rider") {
       router.replace("/admin/orders");
     } else {
-      router.replace("/products");
+      router.replace("/");
     }
   };
 

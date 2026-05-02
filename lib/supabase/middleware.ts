@@ -30,12 +30,24 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const role = getRole(user);
+  let role = getRole(user);
   const isAdminRoute = request.nextUrl.pathname.startsWith("/admin");
   const isLoginRoute = request.nextUrl.pathname === "/admin/login";
 
-  // Block unauthenticated or plain users from all /admin/* routes
-  if (isAdminRoute && !isLoginRoute && (!user || role === "user")) {
+  // If JWT has no role, fall back to DB users table
+  if (user && role === "customer") {
+    const { data: dbUser } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    if (dbUser?.role === "admin" || dbUser?.role === "moderator") {
+      role = dbUser.role as "admin" | "moderator";
+    }
+  }
+
+  // Block unauthenticated or plain customers from all /admin/* routes
+  if (isAdminRoute && !isLoginRoute && (!user || role === "customer")) {
     const url = request.nextUrl.clone();
     url.pathname = "/403";
     return NextResponse.redirect(url);
@@ -54,7 +66,7 @@ export async function updateSession(request: NextRequest) {
   }
 
   // Redirect already-logged-in users away from login page
-  if (isLoginRoute && user && role !== "user") {
+  if (isLoginRoute && user && role !== "customer") {
     const url = request.nextUrl.clone();
     url.pathname = role === "moderator" ? "/admin/orders" : "/admin/dashboard";
     return NextResponse.redirect(url);

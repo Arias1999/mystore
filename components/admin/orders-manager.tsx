@@ -40,10 +40,22 @@ export function OrdersManager() {
     setError("");
     const { data, error: err } = await supabase
       .from("storefront_orders")
-      .select("*, users(email)")
+      .select("*")
       .order("created_at", { ascending: false });
     if (err) { setError(err.message); setLoading(false); return; }
-    setOrders((data ?? []).map((o: any) => ({ ...o, user_email: o.users?.email })));
+
+    // Fetch user emails separately
+    const userIds = [...new Set((data ?? []).map((o: any) => o.user_id).filter(Boolean))];
+    let emailMap: Record<string, string> = {};
+    if (userIds.length > 0) {
+      const { data: users } = await supabase
+        .from("users")
+        .select("id, email")
+        .in("id", userIds);
+      emailMap = Object.fromEntries((users ?? []).map((u: any) => [u.id, u.email]));
+    }
+
+    setOrders((data ?? []).map((o: any) => ({ ...o, user_email: emailMap[o.user_id] ?? "" })));
     setLoading(false);
   }, [supabase]);
 

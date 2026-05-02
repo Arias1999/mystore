@@ -1,7 +1,10 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Bell, Menu, Search } from "lucide-react";
 import { ThemeToggle } from "@/components/admin/theme-toggle";
+import { createClient } from "@/lib/supabase/client";
+import Link from "next/link";
 
 type TopbarProps = {
   onMenuClick: () => void;
@@ -9,6 +12,26 @@ type TopbarProps = {
 };
 
 export function Topbar({ onMenuClick, onSearchChange }: TopbarProps) {
+  const [adminName, setAdminName] = useState("Admin");
+  const [initials, setInitials] = useState("AD");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(async ({ data: { user } }) => {
+      if (!user) return;
+      const { data } = await supabase
+        .from("users")
+        .select("name, email, avatar_url")
+        .eq("id", user.id)
+        .single();
+      const display = data?.name || data?.email || "Admin";
+      setAdminName(display);
+      setInitials(display.slice(0, 2).toUpperCase());
+      if (data?.avatar_url) setAvatarUrl(data.avatar_url);
+    });
+  }, []);
+
   return (
     <header className="sticky top-0 z-20 border-b border-[var(--line)] bg-[color:color-mix(in_srgb,var(--surface)_88%,transparent)] backdrop-blur">
       <div className="flex items-center gap-3 px-4 py-3 md:px-6">
@@ -36,15 +59,22 @@ export function Topbar({ onMenuClick, onSearchChange }: TopbarProps) {
           <Bell size={18} />
         </button>
         <ThemeToggle />
-        <div className="hidden items-center gap-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2 sm:flex">
-          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white">
-            AD
+        <Link
+          href="/admin/profile"
+          className="hidden items-center gap-3 rounded-lg border border-[var(--line)] bg-[var(--surface)] px-3 py-2 sm:flex hover:bg-[var(--surface-soft)] transition"
+        >
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-semibold text-white overflow-hidden">
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="avatar" className="h-full w-full object-cover" />
+            ) : (
+              initials
+            )}
           </div>
           <div>
             <p className="text-xs text-[var(--text-muted)]">Admin</p>
-            <p className="text-sm font-semibold text-[var(--text)]">My Store Owner</p>
+            <p className="text-sm font-semibold text-[var(--text)]">{adminName}</p>
           </div>
-        </div>
+        </Link>
       </div>
     </header>
   );

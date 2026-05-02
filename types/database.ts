@@ -71,6 +71,7 @@ export type Database = {
           email: string;
           name: string | null;
           role: "admin" | "moderator" | "customer";
+          avatar_url: string | null;
           created_at: string;
         };
         Insert: {
@@ -78,6 +79,7 @@ export type Database = {
           email: string;
           name?: string | null;
           role?: "admin" | "moderator" | "customer";
+          avatar_url?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["users"]["Insert"]>;
@@ -125,6 +127,7 @@ export type Database = {
           name: string;
           email: string;
           message: string;
+          reply: string | null;
           created_at: string;
         };
         Insert: {
@@ -132,6 +135,7 @@ export type Database = {
           name: string;
           email: string;
           message: string;
+          reply?: string | null;
           created_at?: string;
         };
         Update: Partial<Database["public"]["Tables"]["contact_messages"]["Insert"]>;

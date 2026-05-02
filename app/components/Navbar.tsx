@@ -70,7 +70,15 @@ export default function Navbar() {
           <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
           {user && <button onClick={() => router.push("/orders")} style={styles.navBtn}>My Orders</button>}
         </div>
-        <form onSubmit={(e) => { e.preventDefault(); if (search.trim()) router.push(`/products?search=${encodeURIComponent(search)}`); }} style={{ display: "flex", alignItems: "center" }}>
+        <form onSubmit={(e) => { 
+          e.preventDefault(); 
+          if (!search.trim()) return;
+          if (user) {
+            router.push(`/products?search=${encodeURIComponent(search)}`);
+          } else {
+            router.push("/login");
+          }
+        }} style={{ display: "flex", alignItems: "center" }}>
           <input
             type="text"
             placeholder="🔍 Search products..."
