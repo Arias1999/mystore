@@ -1,9 +1,8 @@
 "use client";
 
-import { Suspense, useState, useEffect } from "react";
+import { Suspense, useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Navbar from "../components/Navbar";
-import { createClient } from "@/lib/supabase/client";
 
 type Product = { name: string; price: number; img: string; category: string };
 type CartItem = Product & { qty: number };
@@ -63,13 +62,6 @@ function ProductsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const search = searchParams.get("search") || "";
-
-  useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data }) => {
-      if (!data.user) router.replace("/login");
-    });
-  }, []);
 
   const filtered = productsData.filter((p) => {
     const matchSearch = p.name.toLowerCase().includes(search.toLowerCase());

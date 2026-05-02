@@ -4,23 +4,44 @@ import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import Navbar from "../components/Navbar";
 
+type MyMessage = {
+  id: string;
+  message: string;
+  reply: string | null;
+  created_at: string;
+};
+
 export default function ContactPage() {
   const supabase = createClient();
   const [form, setForm] = useState({ name: "", email: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
   const [feedback, setFeedback] = useState<{ type: "success" | "error"; text: string } | null>(null);
+  const [myMessages, setMyMessages] = useState<MyMessage[]>([]);
+  const [userEmail, setUserEmail] = useState("");
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
       if (data.user) {
+        const email = data.user.email || "";
         setForm((prev) => ({
           ...prev,
           name: data.user.user_metadata?.name || "",
-          email: data.user.email || "",
+          email,
         }));
+        setUserEmail(email);
+        fetchMyMessages(email);
       }
     });
   }, []);
+
+  async function fetchMyMessages(email: string) {
+    const { data } = await supabase
+      .from("contact_messages")
+      .select("id, message, reply, created_at")
+      .eq("email", email)
+      .order("created_at", { ascending: false });
+    setMyMessages(data ?? []);
+  }
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -45,12 +66,13 @@ export default function ContactPage() {
         return;
       }
 
-      setForm({ name: "", email: "", message: "" });
-      setFeedback({ type: "success", text: "Message sent successfully. We will contact you soon." });
+      setForm((prev) => ({ ...prev, message: "" }));
+      setFeedback({ type: "success", text: "Message sent! We will reply soon." });
+      if (userEmail) fetchMyMessages(userEmail);
     } catch {
       setFeedback({
         type: "error",
-        text: "Cannot connect to Supabase. Check your NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY.",
+        text: "Cannot connect to Supabase. Check your environment variables.",
       });
     } finally {
       setSubmitting(false);
@@ -166,6 +188,39 @@ export default function ContactPage() {
             </button>
           </form>
         </div>
+
+        {/* MY MESSAGES & ADMIN REPLIES */}
+        {myMessages.length > 0 && (
+          <div style={{ ...styles.card, marginTop: "8px" }}>
+            <h2 style={styles.cardTitle}>📬 My Messages</h2>
+            <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
+              {myMessages.map((msg) => (
+                <div key={msg.id} style={{ borderRadius: "12px", border: "1px solid #e2e8f0", overflow: "hidden" }}>
+                  <div style={{ padding: "14px 16px", background: "#f8fafc" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "6px" }}>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#15803d" }}>You</span>
+                      <span style={{ fontSize: "12px", color: "#94a3b8" }}>
+                        {new Date(msg.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}
+                      </span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: "14px", color: "#374151" }}>{msg.message}</p>
+                  </div>
+                  {msg.reply ? (
+                    <div style={{ padding: "14px 16px", background: "#dcfce7", borderTop: "1px solid #bbf7d0" }}>
+                      <span style={{ fontSize: "12px", fontWeight: 700, color: "#14532d", display: "block", marginBottom: "6px" }}>🛡️ Admin Reply</span>
+                      <p style={{ margin: 0, fontSize: "14px", color: "#166534" }}>{msg.reply}</p>
+                    </div>
+                  ) : (
+                    <div style={{ padding: "10px 16px", background: "#fefce8", borderTop: "1px solid #fef08a" }}>
+                      <span style={{ fontSize: "12px", color: "#854d0e", fontWeight: 600 }}>⏳ Waiting for admin reply...</span>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
 
       <footer style={styles.footer}>

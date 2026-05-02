@@ -17,6 +17,7 @@ type StorefrontOrder = {
   status: string;
   created_at: string;
   user_email?: string;
+  rider_name?: string;
 };
 
 type Message = { id: string; sender_role: string; message: string; created_at: string };
@@ -44,18 +45,26 @@ export function OrdersManager() {
       .order("created_at", { ascending: false });
     if (err) { setError(err.message); setLoading(false); return; }
 
-    // Fetch user emails separately
+    // Fetch user emails and rider names separately
     const userIds = [...new Set((data ?? []).map((o: any) => o.user_id).filter(Boolean))];
+    const riderIds = [...new Set((data ?? []).map((o: any) => o.rider_id).filter(Boolean))];
     let emailMap: Record<string, string> = {};
+    let riderMap: Record<string, string> = {};
+
     if (userIds.length > 0) {
-      const { data: users } = await supabase
-        .from("users")
-        .select("id, email")
-        .in("id", userIds);
+      const { data: users } = await supabase.from("users").select("id, email").in("id", userIds);
       emailMap = Object.fromEntries((users ?? []).map((u: any) => [u.id, u.email]));
     }
+    if (riderIds.length > 0) {
+      const { data: riders } = await supabase.from("users").select("id, name, email").in("id", riderIds);
+      riderMap = Object.fromEntries((riders ?? []).map((r: any) => [r.id, r.name ?? r.email]));
+    }
 
-    setOrders((data ?? []).map((o: any) => ({ ...o, user_email: emailMap[o.user_id] ?? "" })));
+    setOrders((data ?? []).map((o: any) => ({
+      ...o,
+      user_email: emailMap[o.user_id] ?? "",
+      rider_name: o.rider_id ? (riderMap[o.rider_id] ?? "Unknown") : undefined,
+    })));
     setLoading(false);
   }, [supabase]);
 
@@ -119,6 +128,7 @@ export function OrdersManager() {
               <th className="px-4 py-3 font-medium">Payment</th>
               <th className="px-4 py-3 font-medium">Total</th>
               <th className="px-4 py-3 font-medium">Date</th>
+              <th className="px-4 py-3 font-medium">Rider</th>
               <th className="px-4 py-3 font-medium">Status</th>
               <th className="px-4 py-3 font-medium">Actions</th>
             </tr>
@@ -131,6 +141,15 @@ export function OrdersManager() {
                 <td className="px-4 py-3 text-[var(--text)]">{order.payment}</td>
                 <td className="px-4 py-3 text-[var(--text)]">₱{order.total}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.created_at)}</td>
+                <td className="px-4 py-3">
+                  {order.rider_name ? (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-blue-50 px-2 py-0.5 text-xs font-bold text-blue-700">
+                      🏍️ {order.rider_name}
+                    </span>
+                  ) : (
+                    <span className="text-xs text-[var(--text-muted)]">— Unassigned</span>
+                  )}
+                </td>
                 <td className="px-4 py-3">
                   <span className={`rounded-full px-3 py-1 text-xs font-bold ${statusColor[order.status] ?? "bg-gray-100 text-gray-600"}`}>
                     {order.status}
@@ -157,7 +176,7 @@ export function OrdersManager() {
             ))}
             {paginated.length === 0 && (
               <tr>
-                <td colSpan={7} className="px-4 py-6 text-center text-[var(--text-muted)]">No orders yet.</td>
+                <td colSpan={8} className="px-4 py-6 text-center text-[var(--text-muted)]">No orders yet.</td>
               </tr>
             )}
           </tbody>

@@ -62,6 +62,10 @@ export default function Navbar() {
 
   return (
     <>
+      <style>{`
+        .search-input::placeholder { color: #9ca3af; }
+        .search-input:focus { outline: 2px solid #15803d !important; }
+      `}</style>
       <nav style={styles.navbar}>
         <span style={styles.logo}>🛒 LYRA'S STORE</span>
         <div style={{ display: "flex", gap: "4px" }}>
@@ -70,20 +74,20 @@ export default function Navbar() {
           <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
           {user && <button onClick={() => router.push("/orders")} style={styles.navBtn}>My Orders</button>}
         </div>
-        <form onSubmit={(e) => { 
-          e.preventDefault(); 
+        <form onSubmit={(e) => {
+          e.preventDefault();
           if (!search.trim()) return;
-          if (user) {
-            router.push(`/products?search=${encodeURIComponent(search)}`);
-          } else {
-            router.push("/login");
-          }
+          router.push(`/products?search=${encodeURIComponent(search.trim())}`);
         }} style={{ display: "flex", alignItems: "center" }}>
           <input
             type="text"
-            placeholder="🔍 Search products..."
+            placeholder="Search products..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              router.push(`/products?search=${encodeURIComponent(e.target.value.trim())}`);
+            }}
+            className="search-input"
             style={styles.searchInput}
           />
         </form>
@@ -214,10 +218,9 @@ const styles = {
   },
   logo: { color: "white", fontSize: "20px", fontWeight: 900, letterSpacing: "0.5px" },
   searchInput: {
-    padding: "8px 18px", borderRadius: "20px", border: "none",
+    padding: "8px 18px", borderRadius: "20px", border: "2px solid transparent",
     fontSize: "14px", outline: "none", width: "220px",
-    background: "rgba(255,255,255,0.2)", color: "white",
-    "::placeholder": { color: "rgba(255,255,255,0.7)" },
+    background: "white", color: "#0f172a",
   },
   navBtn: {
     background: "transparent", border: "none", color: "rgba(255,255,255,0.9)",

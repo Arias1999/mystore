@@ -19,6 +19,11 @@ export function RidersManager() {
   const [password, setPassword] = useState("");
   const [creating, setCreating] = useState(false);
 
+  const defaultRiders = [
+    { name: "Rilay", email: "rilay@lyrastore.com" },
+    { name: "Rider", email: "rider@lyrastore.com" },
+  ];
+
   const supabase = createClient();
 
   useEffect(() => { fetchAll(); }, []);
@@ -27,15 +32,24 @@ export function RidersManager() {
     setLoading(true);
     const [{ data: riderData }, { data: orderData }] = await Promise.all([
       supabase.from("users").select("id, name, email, created_at").eq("role", "rider").order("created_at", { ascending: false }),
-      supabase.from("storefront_orders").select("id, total, status, rider_id, users(email)").order("created_at", { ascending: false }),
+      supabase.from("storefront_orders").select("id, total, status, rider_id, user_id").order("created_at", { ascending: false }),
     ]);
 
     setRiders(riderData ?? []);
 
     const riderMap = Object.fromEntries((riderData ?? []).map((r) => [r.id, r.name ?? r.email]));
+
+    // Fetch user emails separately
+    const userIds = [...new Set((orderData ?? []).map((o: any) => o.user_id).filter(Boolean))];
+    let emailMap: Record<string, string> = {};
+    if (userIds.length > 0) {
+      const { data: users } = await supabase.from("users").select("id, email").in("id", userIds);
+      emailMap = Object.fromEntries((users ?? []).map((u: any) => [u.id, u.email]));
+    }
+
     setOrders((orderData ?? []).map((o: any) => ({
       id: o.id,
-      user_email: o.users?.email ?? "—",
+      user_email: emailMap[o.user_id] ?? "—",
       total: o.total,
       status: o.status,
       rider_id: o.rider_id,
@@ -99,6 +113,27 @@ export function RidersManager() {
           {/* Create Rider */}
           <div className="rounded-xl border border-[var(--line)] bg-[var(--surface)] p-5 space-y-3">
             <h3 className="text-sm font-semibold text-[var(--text)]">Add New Rider</h3>
+
+            {/* Quick Add default riders */}
+            <div className="flex flex-wrap gap-2">
+              <p className="w-full text-xs text-[var(--text-muted)]">Quick add:</p>
+              {defaultRiders
+                .filter((d) => !riders.some((r) => r.email === d.email))
+                .map((d) => (
+                  <button
+                    key={d.email}
+                    type="button"
+                    onClick={() => { setName(d.name); setEmail(d.email); }}
+                    className="rounded-full border border-[var(--accent)] px-3 py-1 text-xs font-semibold text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white transition"
+                  >
+                    + {d.name}
+                  </button>
+                ))}
+              {defaultRiders.every((d) => riders.some((r) => r.email === d.email)) && (
+                <p className="text-xs text-[var(--text-muted)]">All default riders already added.</p>
+              )}
+            </div>
+
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
               <input value={name} onChange={(e) => setName(e.target.value)} placeholder="Full name"
                 className="h-10 rounded-lg border border-[var(--line)] bg-[var(--surface-soft)] px-3 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)]" />
@@ -174,16 +209,25 @@ export function RidersManager() {
                     </span>
                   </td>
                   <td className="px-4 py-3">
-                    <select
-                      value={o.rider_id ?? ""}
-                      onChange={(e) => handleAssignRider(o.id, e.target.value)}
-                      className="h-9 rounded-lg border border-[var(--line)] bg-[var(--surface-soft)] px-2 text-sm text-[var(--text)] outline-none focus:border-[var(--accent)]"
-                    >
-                      <option value="">— Unassigned —</option>
-                      {riders.map((r) => (
-                        <option key={r.id} value={r.id}>{r.name ?? r.email}</option>
-                      ))}
-                    </select>
+                    {riders.length === 0 ? (
+                      <span className="text-xs text-[var(--text-muted)]">No riders available</span>
+                    ) : (
+                      <div className="flex flex-wrap gap-1">
+                        {riders.map((r) => (
+                          <button
+                            key={r.id}
+                            onClick={() => handleAssignRider(o.id, o.rider_id === r.id ? "" : r.id)}
+                            className={`rounded-full px-3 py-1 text-xs font-bold transition ${
+                              o.rider_id === r.id
+                                ? "bg-[var(--accent)] text-white"
+                                : "border border-[var(--line)] text-[var(--text)] hover:bg-[var(--accent)] hover:text-white"
+                            }`}
+                          >
+                            🏍️ {r.name ?? r.email}
+                          </button>
+                        ))}
+                      </div>
+                    )}
                   </td>
                 </tr>
               ))}
