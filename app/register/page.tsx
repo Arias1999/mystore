@@ -61,8 +61,7 @@ export default function RegisterPage() {
         return;
       }
 
-      setStep("otp");
-      setMessage({ type: "success", text: "OTP sent! Please check your email." });
+      router.push(`/verify?email=${encodeURIComponent(email.trim())}`);
     } catch {
       setMessage({ type: "error", text: "Cannot connect. Check your internet connection." });
     } finally {
