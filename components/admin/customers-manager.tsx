@@ -9,7 +9,7 @@ import { Pagination } from "@/components/admin/pagination";
 import { formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
-type Customer = { id: string; name: string | null; email: string; created_at: string };
+type Customer = { id: string; name: string | null; email: string; created_at: string; total_orders?: number };
 
 const PAGE_SIZE = 10;
 
@@ -28,6 +28,7 @@ export function CustomersManager() {
     const { data, error: fetchError } = await supabase
       .from("users")
       .select("id, name, email, created_at")
+      .eq("role", "customer")
       .order("created_at", { ascending: false });
 
     if (fetchError) {
@@ -36,7 +37,17 @@ export function CustomersManager() {
       return;
     }
 
-    setCustomers(data ?? []);
+    // Get order counts per user
+    const { data: orders } = await supabase
+      .from("storefront_orders")
+      .select("user_id");
+
+    const orderCounts: Record<string, number> = {};
+    (orders ?? []).forEach((o: any) => {
+      orderCounts[o.user_id] = (orderCounts[o.user_id] || 0) + 1;
+    });
+
+    setCustomers((data ?? []).map((c: any) => ({ ...c, total_orders: orderCounts[c.id] || 0 })));
     setLoading(false);
   }, [supabase]);
 
@@ -103,7 +114,7 @@ export function CustomersManager() {
                 <td className="px-4 py-3 text-[var(--text)]">{customer.name ?? "No name"}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{customer.email}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">-</td>
-                <td className="px-4 py-3 text-[var(--text)]">-</td>
+                <td className="px-4 py-3 text-[var(--text)]">{customer.total_orders ?? 0}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(customer.created_at)}</td>
                 <td className="px-4 py-3">
                   <Link

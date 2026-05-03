@@ -59,6 +59,8 @@ export default function ProductPage({ title, category, items }: { title: string;
       total,
       payment,
       status: "Pending",
+      delivery_address: user.user_metadata?.address || "",
+      delivery_phone: user.user_metadata?.phone || "",
     });
     if (error) { alert("Failed to place order: " + error.message); return; }
     saveCart([]);

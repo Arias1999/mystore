@@ -17,6 +17,9 @@ type StorefrontOrder = {
   status: string;
   created_at: string;
   user_email?: string;
+  user_name?: string;
+  user_address?: string;
+  user_phone?: string;
 };
 
 type Message = { id: string; sender_role: string; message: string; created_at: string };
@@ -45,12 +48,20 @@ export function OrdersManager() {
     if (err) { setError(err.message); setLoading(false); return; }
 
     const userIds = [...new Set((data ?? []).map((o: any) => o.user_id).filter(Boolean))];
-    let emailMap: Record<string, string> = {};
+    let userMap: Record<string, { email: string; name: string }> = {};
     if (userIds.length > 0) {
-      const { data: users } = await supabase.from("users").select("id, email").in("id", userIds);
-      emailMap = Object.fromEntries((users ?? []).map((u: any) => [u.id, u.email]));
+      const { data: users } = await supabase.from("users").select("id, email, name").in("id", userIds);
+      (users ?? []).forEach((u: any) => {
+        userMap[u.id] = { email: u.email ?? "", name: u.name ?? "" };
+      });
     }
-    setOrders((data ?? []).map((o: any) => ({ ...o, user_email: emailMap[o.user_id] ?? "" })));
+    setOrders((data ?? []).map((o: any) => ({
+      ...o,
+      user_email: userMap[o.user_id]?.email ?? "",
+      user_name: userMap[o.user_id]?.name ?? "",
+      user_address: o.delivery_address ?? "",
+      user_phone: o.delivery_phone ?? "",
+    })));
     setLoading(false);
   }, [supabase]);
 
@@ -173,10 +184,25 @@ export function OrdersManager() {
           <div className="flex w-full max-w-md flex-col rounded-2xl bg-white shadow-2xl" style={{ maxHeight: "80vh" }}>
             <div className="flex items-center justify-between rounded-t-2xl border-b bg-[var(--surface-soft)] px-5 py-4">
               <div>
-                <p className="font-bold text-[var(--text)]">💬 Order #{activeOrder.id.slice(0, 8)}</p>
+                <p className="font-bold text-[var(--text)]">Order #{activeOrder.id.slice(0, 8)}</p>
+                <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_name || activeOrder.user_email}</p>
                 <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_email}</p>
               </div>
               <button onClick={() => setActiveOrder(null)} className="text-[var(--text-muted)] hover:text-[var(--text)]">✕</button>
+            </div>
+
+            {/* Delivery Info */}
+            <div className="border-b border-[var(--line)] bg-blue-50 px-4 py-3 space-y-1">
+              <p className="text-xs font-bold text-blue-700 uppercase tracking-wide">Delivery Information</p>
+              <p className="text-sm text-[var(--text)]">
+                <span className="font-semibold">Name:</span> {activeOrder.user_name || "—"}
+              </p>
+              <p className="text-sm text-[var(--text)]">
+                <span className="font-semibold">Phone:</span> {activeOrder.user_phone || "—"}
+              </p>
+              <p className="text-sm text-[var(--text)]">
+                <span className="font-semibold">Address:</span> {activeOrder.user_address || "—"}
+              </p>
             </div>
 
             {/* Order Items with images */}
