@@ -76,9 +76,9 @@ export default function ProfilePage() {
   if (!user) return null;
 
   return (
-    <div style={{ minHeight: "100vh", background: "#f0fdf4", fontFamily: "'Segoe UI', sans-serif" }}>
+    <div style={{ minHeight: "100vh", background: "#f0fdf4", fontFamily: "'Segoe UI', sans-serif", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <div style={{ maxWidth: "520px", margin: "40px auto", padding: "0 20px" }}>
+      <div style={{ flex: 1, maxWidth: "520px", margin: "40px auto", padding: "0 20px", width: "100%" }}>
         <div style={{ background: "white", border: "1px solid #dcfce7", borderRadius: "20px", padding: "32px", boxShadow: "0 8px 24px rgba(0,0,0,0.08)" }}>
 
           {/* AVATAR */}
@@ -151,6 +151,17 @@ export default function ProfilePage() {
           </button>
         </div>
       </div>
+
+      {/* FOOTER */}
+      <footer style={{ background: "#14532d", color: "white", textAlign: "center", padding: "20px", marginTop: "40px" }}>
+        <div style={{ display: "flex", justifyContent: "center", gap: "20px", marginBottom: "12px", flexWrap: "wrap" }}>
+          <button onClick={() => router.push("/products")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", fontSize: "14px", fontWeight: 600 }}>🛒 All Products</button>
+          <button onClick={() => router.push("/orders")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", fontSize: "14px", fontWeight: 600 }}>📦 My Orders</button>
+          <button onClick={() => router.push("/profile")} style={{ background: "none", border: "none", color: "rgba(255,255,255,0.8)", cursor: "pointer", fontSize: "14px", fontWeight: 600 }}>👤 View Profile</button>
+        </div>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>🛒 LYRA'S STORE</p>
+        <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
+      </footer>
     </div>
   );
 }
