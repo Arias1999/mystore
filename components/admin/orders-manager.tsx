@@ -57,8 +57,8 @@ export function OrdersManager() {
     }
     setOrders((data ?? []).map((o: any) => ({
       ...o,
-      user_email: userMap[o.user_id]?.email ?? "",
-      user_name: userMap[o.user_id]?.name ?? "",
+      user_email: userMap[o.user_id]?.email ?? o.user_id.slice(0, 8),
+      user_name: userMap[o.user_id]?.name || userMap[o.user_id]?.email || o.user_id.slice(0, 8),
       user_address: o.delivery_address ?? "",
       user_phone: o.delivery_phone ?? "",
     })));
@@ -134,7 +134,7 @@ export function OrdersManager() {
             {paginated.map((order) => (
               <tr key={order.id} className="border-b border-[var(--line)] last:border-b-0">
                 <td className="px-4 py-3 text-[var(--text)]">{order.id.slice(0, 8)}</td>
-                <td className="px-4 py-3 text-[var(--text)]">{order.user_email || order.user_id.slice(0, 8)}</td>
+                <td className="px-4 py-3 text-[var(--text)]">{order.user_name || order.user_email || order.user_id.slice(0, 8)}</td>
                 <td className="px-4 py-3 text-[var(--text)]">COD</td>
                 <td className="px-4 py-3 text-[var(--text)]">₱{order.total}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{formatDate(order.created_at)}</td>
