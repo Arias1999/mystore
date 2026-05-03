@@ -6,6 +6,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
+import { Eye, EyeOff, ShoppingCart, AlertCircle } from "lucide-react";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -48,7 +49,7 @@ export default function LoginPage() {
       <Navbar />
 
       <div style={{ background: "linear-gradient(135deg, #15803d 0%, #16a34a 50%, #22c55e 100%)", padding: "50px 20px", textAlign: "center", color: "white" }}>
-        <div style={{ display: "inline-block", background: "rgba(255,255,255,0.2)", fontSize: "13px", fontWeight: 700, padding: "6px 16px", borderRadius: "20px", marginBottom: "16px" }}>🔐 Welcome Back</div>
+        <div style={{ display: "inline-block", background: "rgba(255,255,255,0.2)", fontSize: "13px", fontWeight: 700, padding: "6px 16px", borderRadius: "20px", marginBottom: "16px" }}>Welcome Back</div>
         <h1 style={{ fontSize: "36px", fontWeight: 900, margin: "0 0 12px", textShadow: "0 2px 8px rgba(0,0,0,0.15)" }}>Sign In</h1>
         <p style={{ fontSize: "16px", margin: 0, opacity: 0.9 }}>Login to continue shopping at LYRA&apos;S STORE</p>
       </div>
@@ -56,14 +57,14 @@ export default function LoginPage() {
       <div style={{ flex: 1, display: "flex", justifyContent: "center", padding: "40px 24px" }}>
         <div style={styles.card}>
           <div style={{ textAlign: "center", marginBottom: "24px" }}>
-            <div style={styles.iconCircle}>🛒</div>
+            <div style={styles.iconCircle}><ShoppingCart size={28} color="#15803d" /></div>
             <h2 style={styles.title}>LYRA&apos;S STORE</h2>
             <p style={styles.sub}>Sign in to continue shopping</p>
           </div>
 
           {error && (
             <div style={styles.errorBox}>
-              <span>⚠️</span>
+              <AlertCircle size={16} />
               <span>{error}</span>
             </div>
           )}
@@ -87,7 +88,7 @@ export default function LoginPage() {
               style={{ ...styles.input, paddingRight: "44px" }}
             />
             <button type="button" onClick={() => setShowPassword((v) => !v)} style={styles.eyeBtn}>
-              {showPassword ? "🙈" : "👁️"}
+              {showPassword ? <EyeOff size={18} color="#64748b" /> : <Eye size={18} color="#64748b" />}
             </button>
           </div>
 
@@ -103,7 +104,7 @@ export default function LoginPage() {
       </div>
 
       <footer style={styles.footer}>
-        <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>🛒 LYRA&apos;S STORE</p>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>LYRA'S STORE</p>
         <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
       </footer>
     </div>
