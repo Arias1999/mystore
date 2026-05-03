@@ -6,6 +6,7 @@ import { useEffect, useState, useRef } from "react";
 import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
+import { Package, MessageCircle, ChevronLeft, X, Send } from "lucide-react";
 
 type OrderItem = { name: string; price: number; qty: number; img?: string };
 type Order = { id: string; items: OrderItem[]; total: number; payment: string; status: string; created_at: string };
@@ -13,9 +14,9 @@ type Message = { id: string; sender_role: string; message: string; created_at: s
 type UserInfo = { name: string; email: string; phone: string };
 
 const statusStyle: Record<string, { background: string; color: string; label: string }> = {
-  Pending:  { background: "#fefce8", color: "#854d0e", label: "⏳ Pending" },
-  Approved: { background: "#f0fdf4", color: "#15803d", label: "✅ Approved" },
-  Rejected: { background: "#fef2f2", color: "#b91c1c", label: "❌ Rejected" },
+  Pending:  { background: "#fefce8", color: "#854d0e", label: "Pending" },
+  Approved: { background: "#f0fdf4", color: "#15803d", label: "Approved" },
+  Rejected: { background: "#fef2f2", color: "#b91c1c", label: "Rejected" },
 };
 
 export default function OrdersPage() {
@@ -106,9 +107,9 @@ export default function OrdersPage() {
     <div style={{ minHeight: "100vh", background: "#f0fdf4", fontFamily: "'Segoe UI', sans-serif", display: "flex", flexDirection: "column" }}>
       <Navbar />
       <div style={{ flex: 1, maxWidth: "720px", margin: "40px auto", padding: "0 20px", width: "100%" }}>
-        <button onClick={() => router.push("/products")} style={styles.backBtn}>← Back to Products</button>
+        <button onClick={() => router.push("/products")} style={styles.backBtn}><ChevronLeft size={16} style={{ display: "inline", verticalAlign: "middle" }} />Back to Products</button>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "16px 0 28px" }}>
-          <h2 style={{ margin: 0, fontSize: "28px", fontWeight: 900, color: "#14532d" }}>📦 My Orders</h2>
+          <h2 style={{ margin: 0, fontSize: "28px", fontWeight: 900, color: "#14532d", display: "flex", alignItems: "center", gap: 10 }}><Package size={26} />My Orders</h2>
           <span style={styles.countBadge}>{orders.length} order{orders.length !== 1 ? "s" : ""}</span>
         </div>
 
@@ -155,7 +156,7 @@ export default function OrdersPage() {
                 </div>
 
                 <div style={styles.orderFooter}>
-                  <button onClick={() => openMessages(order.id)} style={styles.msgBtn}>💬 Message Admin</button>
+                  <button onClick={() => openMessages(order.id)} style={styles.msgBtn}><MessageCircle size={14} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />Message Admin</button>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
                     <span style={{ color: "#64748b", fontSize: "14px" }}>Total:</span>
                     <span style={{ fontWeight: 900, fontSize: "20px", color: "#15803d" }}>₱{order.total}</span>
@@ -179,7 +180,7 @@ export default function OrdersPage() {
           <div style={{ background: "white", borderRadius: "20px", width: "100%", maxWidth: "460px", display: "flex", flexDirection: "column", maxHeight: "80vh", boxShadow: "0 20px 50px rgba(0,0,0,0.2)" }}>
             <div style={{ padding: "18px 20px", borderBottom: "1px solid #f0fdf4", display: "flex", justifyContent: "space-between", alignItems: "center", background: "#f0fdf4", borderRadius: "20px 20px 0 0" }}>
               <div>
-                <span style={{ fontWeight: 900, color: "#14532d", fontSize: "16px" }}>💬 Message Admin</span>
+                <span style={{ fontWeight: 900, color: "#14532d", fontSize: "16px", display: "flex", alignItems: "center", gap: 6 }}><MessageCircle size={16} />Message Admin</span>
                 {userInfo && (
                   <div style={{ marginTop: "6px", display: "flex", flexDirection: "column", gap: "2px" }}>
                     <span style={{ fontSize: "12px", color: "#374151", fontWeight: 700 }}>👤 {userInfo.name}</span>
@@ -188,7 +189,7 @@ export default function OrdersPage() {
                   </div>
                 )}
               </div>
-              <button onClick={() => setActiveOrder(null)} style={{ background: "none", border: "none", cursor: "pointer", fontSize: "18px", color: "#64748b" }}>✕</button>
+              <button onClick={() => setActiveOrder(null)} style={{ background: "none", border: "none", cursor: "pointer", color: "#64748b", display: "flex", alignItems: "center" }}><X size={18} /></button>
             </div>
             <div style={{ flex: 1, overflowY: "auto", padding: "16px", display: "flex", flexDirection: "column", gap: "10px" }}>
               {messages.length === 0 && (
@@ -218,8 +219,8 @@ export default function OrdersPage() {
                 rows={3}
                 style={{ flex: 1, padding: "10px 14px", borderRadius: "12px", border: "1.5px solid #bbf7d0", fontSize: "14px", outline: "none", resize: "none" }}
               />
-              <button onClick={sendMessage} disabled={sending || !newMsg.trim()} style={{ padding: "10px 18px", background: "#15803d", color: "white", border: "none", borderRadius: "12px", cursor: "pointer", fontWeight: 700, fontSize: "14px", opacity: sending ? 0.7 : 1 }}>
-                Send
+              <button onClick={sendMessage} disabled={sending || !newMsg.trim()} style={{ padding: "10px 18px", background: "#15803d", color: "white", border: "none", borderRadius: "12px", cursor: "pointer", fontWeight: 700, fontSize: "14px", opacity: sending ? 0.7 : 1, display: "flex", alignItems: "center", gap: 6 }}>
+                <Send size={14} />Send
               </button>
             </div>
           </div>

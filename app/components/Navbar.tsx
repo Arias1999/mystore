@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { ShoppingCart, Search, User as UserIcon, LogOut, Package, X, Minus, Plus, Trash2 } from "lucide-react";
 
 export default function Navbar() {
   const router = useRouter();
@@ -111,12 +112,12 @@ export default function Navbar() {
         .search-input:focus { outline: 2px solid #15803d !important; }
       `}</style>
       <nav style={styles.navbar}>
-        <span style={styles.logo}>🛒 LYRA'S STORE</span>
+        <span style={styles.logo}><ShoppingCart size={20} style={{ display: "inline", marginRight: 8, verticalAlign: "middle" }} />LYRA'S STORE</span>
         <div style={{ display: "flex", gap: "4px" }}>
           <button onClick={() => router.push("/")} style={styles.navBtn}>Home</button>
           <button onClick={() => router.push("/about")} style={styles.navBtn}>About</button>
           <button onClick={() => router.push("/contact")} style={styles.navBtn}>Contact</button>
-          {user && <button onClick={() => router.push("/orders")} style={styles.navBtn}>My Orders</button>}
+          {user && <button onClick={() => router.push("/orders")} style={styles.navBtn}><Package size={14} style={{ display: "inline", marginRight: 4, verticalAlign: "middle" }} />My Orders</button>}
         </div>
         <form onSubmit={(e) => {
           e.preventDefault();
@@ -137,7 +138,8 @@ export default function Navbar() {
         </form>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <button onClick={() => setCartOpen(true)} style={styles.cartBtn}>
-            🛒 Cart
+            <ShoppingCart size={16} />
+            Cart
             {cartCount > 0 && <span style={styles.cartBadge}>{cartCount}</span>}
           </button>
           {user ? (
@@ -148,7 +150,7 @@ export default function Navbar() {
                 aria-label="Profile"
                 title="Profile"
               >
-                {"\u{1F464}"}
+                <UserIcon size={18} />
               </button>
               {profileOpen && (
                 <>
@@ -173,7 +175,7 @@ export default function Navbar() {
                       }}
                       style={styles.profileLogoutBtn}
                     >
-                      Log out
+                      <LogOut size={14} style={{ display: "inline", marginRight: 6 }} />Log out
                     </button>
                     <button
                       type="button"
@@ -205,14 +207,14 @@ export default function Navbar() {
       {/* CART DRAWER */}
       <div style={{ ...styles.drawer, right: cartOpen ? 0 : "-420px" }}>
         <div style={styles.drawerHeader}>
-          <span style={{ fontWeight: 900, fontSize: "18px" }}>🛒 My Cart ({cartCount})</span>
-          <button onClick={() => setCartOpen(false)} style={styles.closeBtn}>✕</button>
+          <span style={{ fontWeight: 900, fontSize: "18px", display: "flex", alignItems: "center", gap: 8 }}><ShoppingCart size={18} /> My Cart ({cartCount})</span>
+          <button onClick={() => setCartOpen(false)} style={styles.closeBtn}><X size={16} /></button>
         </div>
 
         <div style={{ flex: 1, overflowY: "auto", padding: "16px" }}>
           {cart.length === 0 ? (
             <div style={{ textAlign: "center", padding: "60px 0", color: "#9ca3af" }}>
-              <div style={{ fontSize: "52px", marginBottom: "12px" }}>🛍️</div>
+              <div style={{ fontSize: "48px", marginBottom: "12px", display: "flex", justifyContent: "center" }}><ShoppingCart size={48} color="#d1d5db" /></div>
               <p style={{ margin: 0, fontWeight: 700 }}>Your cart is empty</p>
               <p style={{ margin: "8px 0 0", fontSize: "13px" }}>Add products to get started</p>
             </div>
@@ -224,13 +226,13 @@ export default function Navbar() {
                   <p style={{ margin: "0 0 4px", fontWeight: 700, fontSize: "14px", color: "#0f172a" }}>{item.name}</p>
                   <p style={{ margin: "0 0 8px", color: "#15803d", fontWeight: 800, fontSize: "15px" }}>₱{item.price}</p>
                   <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                    <button onClick={() => updateQty(index, -1)} style={styles.qtyBtn}>−</button>
+                    <button onClick={() => updateQty(index, -1)} style={styles.qtyBtn}><Minus size={14} /></button>
                     <span style={{ fontWeight: 700, minWidth: "24px", textAlign: "center" }}>{item.qty}</span>
-                    <button onClick={() => updateQty(index, 1)} style={styles.qtyBtn}>+</button>
+                    <button onClick={() => updateQty(index, 1)} style={styles.qtyBtn}><Plus size={14} /></button>
                     <span style={{ marginLeft: "auto", fontWeight: 800, color: "#15803d" }}>₱{item.price * item.qty}</span>
                   </div>
                 </div>
-                <button onClick={() => removeItem(index)} style={styles.removeBtn}>🗑️ Remove</button>
+                <button onClick={() => removeItem(index)} style={styles.removeBtn}><Trash2 size={14} style={{ display: "inline", marginRight: 4 }} />Remove</button>
               </div>
             ))
           )}
@@ -245,7 +247,7 @@ export default function Navbar() {
             <button onClick={() => { setCartOpen(false); router.push("/products"); }} style={styles.continueBtn}>
               ← Continue Shopping
             </button>
-            <button onClick={placeOrder} style={styles.orderBtn}>✅ Place Order</button>
+            <button onClick={placeOrder} style={styles.orderBtn}>Place Order</button>
           </div>
         )}
       </div>

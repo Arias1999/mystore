@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 import type { User } from "@supabase/supabase-js";
+import { Camera, Pencil, Save, LogOut } from "lucide-react";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -93,7 +94,7 @@ export default function ProfilePage() {
                 onClick={() => fileRef.current?.click()}
                 style={{ position: "absolute", bottom: 0, right: 0, background: "#15803d", border: "none", borderRadius: "50%", width: "30px", height: "30px", cursor: "pointer", color: "white", fontSize: "14px", display: "flex", alignItems: "center", justifyContent: "center" }}
               >
-                {uploading ? "..." : "📷"}
+                {uploading ? "..." : <Camera size={14} />}
               </button>
               <input ref={fileRef} type="file" accept="image/*" style={{ display: "none" }} onChange={handleUpload} />
             </div>
@@ -118,7 +119,7 @@ export default function ProfilePage() {
               </div>
               <div style={{ display: "flex", gap: "10px", marginTop: "4px" }}>
                 <button onClick={handleSave} disabled={saving} style={{ ...styles.btn, background: "#15803d", flex: 1 }}>
-                  {saving ? "Saving..." : "💾 Save"}
+                  {saving ? "Saving..." : <><Save size={14} style={{ display: "inline", marginRight: 4 }} />Save</>}
                 </button>
                 <button onClick={() => { setEditing(false); setMsg(""); }} style={{ ...styles.btn, background: "#64748b", flex: 1 }}>
                   Cancel
@@ -138,16 +139,16 @@ export default function ProfilePage() {
                   <p style={{ margin: 0, fontSize: "14px", color: "#0f172a", fontWeight: 600 }}>{item.value}</p>
                 </div>
               ))}
-              <button onClick={() => setEditing(true)} style={{ ...styles.btn, background: "#15803d", marginTop: "4px" }}>
-                ✏️ Edit Profile
+              <button onClick={() => setEditing(true)} style={{ ...styles.btn, background: "#15803d", marginTop: "4px", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+                <Pencil size={14} />Edit Profile
               </button>
             </div>
           )}
 
           {msg && <p style={{ marginTop: "12px", fontSize: "13px", fontWeight: 700, color: msg.includes("Failed") ? "#b91c1c" : "#15803d", textAlign: "center" }}>{msg}</p>}
 
-          <button onClick={handleLogout} style={{ ...styles.btn, background: "#ef4444", marginTop: "14px" }}>
-            Log out
+          <button onClick={handleLogout} style={{ ...styles.btn, background: "#ef4444", marginTop: "14px", display: "flex", alignItems: "center", justifyContent: "center", gap: 6 }}>
+            <LogOut size={14} />Log out
           </button>
         </div>
       </div>
