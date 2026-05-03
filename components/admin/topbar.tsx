@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Bell, Menu, Search } from "lucide-react";
+import { Menu, Search } from "lucide-react";
 import { ThemeToggle } from "@/components/admin/theme-toggle";
 import { createClient } from "@/lib/supabase/client";
 import Link from "next/link";
@@ -51,13 +51,6 @@ export function Topbar({ onMenuClick, onSearchChange }: TopbarProps) {
             onChange={(event) => onSearchChange(event.target.value)}
           />
         </label>
-        <button
-          type="button"
-          className="inline-flex h-10 w-10 items-center justify-center rounded-lg border border-[var(--line)] bg-[var(--surface)] text-[var(--text)] transition hover:bg-[var(--surface-soft)]"
-          aria-label="Notifications"
-        >
-          <Bell size={18} />
-        </button>
         <ThemeToggle />
         <Link
           href="/admin/profile"
