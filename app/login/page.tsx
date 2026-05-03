@@ -119,7 +119,7 @@ const styles = {
   errorBox: { display: "flex", alignItems: "center", gap: "8px", background: "#fef2f2", border: "1px solid #fecaca", borderRadius: "10px", padding: "10px 14px", marginBottom: "14px", color: "#b91c1c", fontSize: "14px", fontWeight: 600 },
   label: { display: "block", fontSize: "13px", fontWeight: 700, color: "#374151", marginBottom: "6px", marginTop: "14px" },
   input: { display: "block", width: "100%", padding: "12px 16px", borderRadius: "10px", border: "2px solid #e2e8f0", fontSize: "15px", outline: "none", boxSizing: "border-box" as const, background: "#f8fafc", color: "#0f172a" },
-  eyeBtn: { position: "absolute" as const, right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: "16px", padding: "2px" },
+  eyeBtn: { position: "absolute" as const, right: "12px", top: "50%", transform: "translateY(-50%)", background: "none", border: "none", cursor: "pointer", fontSize: 0, padding: "2px", lineHeight: 0, display: "flex", alignItems: "center" },
   button: { marginTop: "20px", width: "100%", padding: "13px", background: "#15803d", color: "white", border: "none", borderRadius: "12px", fontSize: "16px", fontWeight: 800, cursor: "pointer", boxShadow: "0 4px 12px rgba(21,128,61,0.3)" },
   link: { marginTop: "16px", fontSize: "14px", color: "#64748b", cursor: "pointer", textAlign: "center" as const },
   linkSpan: { color: "#15803d", fontWeight: 800 },
