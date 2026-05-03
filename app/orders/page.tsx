@@ -14,9 +14,10 @@ type Message = { id: string; sender_role: string; message: string; created_at: s
 type UserInfo = { name: string; email: string; phone: string };
 
 const statusStyle: Record<string, { background: string; color: string; label: string }> = {
-  Pending:  { background: "#fefce8", color: "#854d0e", label: "Pending" },
-  Approved: { background: "#f0fdf4", color: "#15803d", label: "Approved" },
-  Rejected: { background: "#fef2f2", color: "#b91c1c", label: "Rejected" },
+  Pending:    { background: "#fefce8", color: "#854d0e", label: "Pending" },
+  Approved:   { background: "#f0fdf4", color: "#15803d", label: "Approved" },
+  "On the Way": { background: "#eff6ff", color: "#1d4ed8", label: "On the Way" },
+  Rejected:   { background: "#fef2f2", color: "#b91c1c", label: "Rejected" },
 };
 
 export default function OrdersPage() {
