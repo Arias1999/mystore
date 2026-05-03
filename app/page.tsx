@@ -158,7 +158,7 @@ export default function Home() {
       </div>
 
       {/* FOOTER */}
-      <footer style={styles.footer}>
+      <footer style={{ background: "#14532d", color: "white", textAlign: "center", padding: "20px", marginTop: "40px" }}>
         <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>🛒 LYRA'S STORE</p>
         <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
       </footer>

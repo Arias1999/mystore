@@ -74,9 +74,9 @@ function ProductsContent() {
   
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4", display: "flex", flexDirection: "column" }}>
       <Navbar />
-      <div style={{ padding: "28px 36px" }}>
+      <div style={{ flex: 1, padding: "28px 36px" }}>
         <div style={{ marginBottom: "20px" }}>
           <h2 style={{ margin: "0 0 4px", fontSize: "26px", fontWeight: 900, color: "#14532d" }}>All Products</h2>
           <p style={{ margin: 0, color: "#4ade80", fontSize: "14px", fontWeight: 600 }}>Browse and shop our fresh selections</p>
@@ -123,6 +123,11 @@ function ProductsContent() {
           ))}
         </div>
       </div>
+
+      <footer style={{ background: "#14532d", color: "white", textAlign: "center", padding: "20px", marginTop: "40px" }}>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>🛒 LYRA'S STORE</p>
+        <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
+      </footer>
     </div>
   );
 }

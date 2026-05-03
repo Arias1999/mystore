@@ -68,10 +68,10 @@ export default function ProductPage({ title, category, items }: { title: string;
   };
 
   return (
-    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4" }}>
+    <div style={{ minHeight: "100vh", fontFamily: "'Segoe UI', sans-serif", background: "#f0fdf4", display: "flex", flexDirection: "column" }}>
       <Navbar />
 
-      <div style={{ padding: "28px 32px 100px" }}>
+      <div style={{ flex: 1, padding: "28px 32px 100px" }}>
         <button onClick={() => router.push("/products")} style={styles.backBtn}>← Back to Products</button>
         <div style={{ display: "flex", alignItems: "center", gap: "12px", margin: "12px 0 24px" }}>
           <h2 style={styles.heading}>{title}</h2>
@@ -169,6 +169,11 @@ export default function ProductPage({ title, category, items }: { title: string;
           </div>
         )}
       </div>
+
+      <footer style={{ background: "#14532d", color: "white", textAlign: "center", padding: "20px", marginTop: "40px" }}>
+        <p style={{ margin: 0, fontWeight: 700, fontSize: "15px" }}>🛒 LYRA'S STORE</p>
+        <p style={{ margin: "4px 0 0", fontSize: "13px", opacity: 0.75 }}>© 2026 All Rights Reserved · Developed by Jilly Arias</p>
+      </footer>
 
       {/* PAYMENT MODAL */}
       {paymentOpen && (
