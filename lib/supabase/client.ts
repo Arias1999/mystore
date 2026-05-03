@@ -1,6 +1,7 @@
 "use client";
 
 import { createBrowserClient } from "@supabase/ssr";
+import type { AuthChangeEvent } from "@supabase/supabase-js";
 
 const FALLBACK_URL = "https://placeholder.supabase.co";
 const FALLBACK_KEY = "placeholder";
@@ -11,7 +12,7 @@ export function createClient() {
 
   return createBrowserClient(supabaseUrl, supabaseAnonKey, {
     auth: {
-      onAuthStateChange: (event) => {
+      onAuthStateChange: (event: AuthChangeEvent) => {
         if (event === "TOKEN_REFRESHED") return;
         if (event === "SIGNED_OUT") {
           if (typeof window !== "undefined" && !window.location.pathname.startsWith("/login") && !window.location.pathname.startsWith("/register") && window.location.pathname !== "/") {
