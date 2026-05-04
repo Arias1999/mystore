@@ -95,7 +95,19 @@ export function OrdersManager() {
     setSending(false);
   };
 
-  const updateStatus = async (orderId: string, status: string) => {
+  const deleteOrder = async (orderId: string) => {
+    if (!confirm("Delete this order?")) return;
+    const { error: err } = await supabase.from("storefront_orders").delete().eq("id", orderId);
+    if (err) { toast.error(err.message); return; }
+    toast.success("Order deleted.");
+    setOrders((prev) => prev.filter((o) => o.id !== orderId));
+  };
+
+  const deleteMessage = async (msgId: string) => {
+    const { error: err } = await supabase.from("order_messages").delete().eq("id", msgId);
+    if (err) { toast.error(err.message); return; }
+    setMessages((prev) => prev.filter((m) => m.id !== msgId));
+  };
     const { error: err } = await supabase.from("storefront_orders").update({ status }).eq("id", orderId);
     if (err) { toast.error(err.message); return; }
     toast.success(`Order ${status.toLowerCase()}.`);
@@ -163,6 +175,9 @@ export function OrdersManager() {
                     <button onClick={() => openMessages(order)} className="rounded-md border border-[var(--line)] px-3 py-1 text-xs font-bold text-[var(--text)] hover:bg-[var(--surface-soft)]">
                       Chat
                     </button>
+                    <button onClick={() => deleteOrder(order.id)} className="rounded-md bg-red-50 px-3 py-1 text-xs font-bold text-red-600 hover:bg-red-100">
+                      Delete
+                    </button>
                   </div>
                 </td>
               </tr>
@@ -228,11 +243,12 @@ export function OrdersManager() {
                 <p className="text-center text-sm text-[var(--text-muted)]">No messages yet.</p>
               )}
               {messages.map((msg) => (
-                <div key={msg.id} className={`flex ${msg.sender_role === "admin" ? "justify-end" : "justify-start"}`}>
+                <div key={msg.id} className={`flex items-start gap-1 ${msg.sender_role === "admin" ? "justify-end" : "justify-start"}`}>
                   <div className={`max-w-[75%] rounded-2xl px-4 py-2 text-sm ${msg.sender_role === "admin" ? "bg-[var(--accent)] text-white" : "bg-[var(--surface-soft)] text-[var(--text)]"}`}>
                     <p className="mb-1">{msg.message}</p>
                     <p className="text-xs opacity-60">{new Date(msg.created_at).toLocaleTimeString()}</p>
                   </div>
+                  <button onClick={() => deleteMessage(msg.id)} className="mt-1 shrink-0 text-xs text-red-400 hover:text-red-600" title="Delete message">🗑️</button>
                 </div>
               ))}
               <div ref={msgEndRef} />
