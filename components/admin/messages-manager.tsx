@@ -59,6 +59,14 @@ export function MessagesManager() {
     setSending(null);
   }
 
+  async function handleDelete(id: string) {
+    if (!confirm("Delete this message?")) return;
+    const { error } = await supabase.from("contact_messages").delete().eq("id", id);
+    if (error) { toast.error("Failed to delete message."); return; }
+    toast.success("Message deleted.");
+    setMessages((prev) => prev.filter((m) => m.id !== id));
+  }
+
   if (loading) return <p className="text-sm text-[var(--text-muted)]">Loading messages...</p>;
   if (!messages.length) return <p className="text-sm text-[var(--text-muted)]">No messages yet.</p>;
 
@@ -88,12 +96,20 @@ export function MessagesManager() {
               )}
             </div>
 
-            <button
-              onClick={() => setExpanded(expanded === msg.id ? null : msg.id)}
-              className="shrink-0 rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:bg-[var(--surface-soft)] transition"
-            >
-              {expanded === msg.id ? "Cancel" : msg.reply ? "Edit Reply" : "Reply"}
-            </button>
+            <div className="flex gap-2 shrink-0">
+              <button
+                onClick={() => setExpanded(expanded === msg.id ? null : msg.id)}
+                className="rounded-lg border border-[var(--line)] px-3 py-1.5 text-xs font-medium text-[var(--text)] hover:bg-[var(--surface-soft)] transition"
+              >
+                {expanded === msg.id ? "Cancel" : msg.reply ? "Edit Reply" : "Reply"}
+              </button>
+              <button
+                onClick={() => handleDelete(msg.id)}
+                className="rounded-lg border border-red-200 bg-red-50 px-3 py-1.5 text-xs font-medium text-red-600 hover:bg-red-100 transition"
+              >
+                Delete
+              </button>
+            </div>
           </div>
 
           {expanded === msg.id && (
