@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Bike,
   LayoutDashboard,
   MessageSquare,
   Package,
@@ -26,7 +25,6 @@ const navItems: Item[] = [
   { href: "/admin/products", label: "Products", icon: Package },
   { href: "/admin/inventory", label: "Inventory", icon: PackageSearch },
   { href: "/admin/orders", label: "Orders", icon: ReceiptText },
-  { href: "/admin/riders", label: "Riders", icon: Bike },
   { href: "/admin/customers", label: "Customers", icon: Users },
   { href: "/admin/messages", label: "Messages", icon: MessageSquare },
   { href: "/admin/profile", label: "Profile", icon: UserCircle },
