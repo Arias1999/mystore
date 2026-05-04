@@ -108,6 +108,8 @@ export function OrdersManager() {
     if (err) { toast.error(err.message); return; }
     setMessages((prev) => prev.filter((m) => m.id !== msgId));
   };
+
+  const updateStatus = async (orderId: string, status: string) => {
     const { error: err } = await supabase.from("storefront_orders").update({ status }).eq("id", orderId);
     if (err) { toast.error(err.message); return; }
     toast.success(`Order ${status.toLowerCase()}.`);
