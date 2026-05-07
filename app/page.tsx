@@ -8,12 +8,12 @@ import Navbar from "./components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
 const products = [
-  { name: "Can Goods", img: "/products/canned.jpg", category: "Canned Food", description: "Includes sardines, meat loaf, beef loaf, carne norte, corned beef, tuna, and more. Perfect for quick and easy everyday meals. Long shelf life and packed with flavor." },
-  { name: "Bath Soap", img: "/products/bath-soap.jpg", category: "Personal Care", description: "Gentle and effective soap for daily skin care. Leaves your skin feeling fresh and clean all day. Available in various scents and formulas." },
-  { name: "Laundry Soap", img: "/products/laundry-soap.jpg", category: "Personal Care", description: "Keeps your clothes fresh and clean. Available in different variants for all fabric types. Affordable and effective for everyday laundry needs." },
-  { name: "Eggs", img: "/products/eggs.jpg", category: "Fresh Produce", description: "Farm-fresh eggs packed with protein and nutrients. Perfect for breakfast, baking, and everyday cooking. Sourced from healthy and well-fed chickens." },
-  { name: "Toothpaste", img: "/products/toothpaste.jpg", category: "Personal Care", description: "Protects your teeth from cavities and keeps breath fresh. Formulated for strong enamel and healthy gums. Trusted by families for daily oral care." },
-  { name: "Shampoo", img: "/products/shampoo.jpg", category: "Personal Care", description: "Nourishes and strengthens your hair from root to tip. Leaves hair smooth, shiny, and manageable every day. Available in variants for all hair types." },
+  { name: "Can Goods", price: 12, img: "/products/sardines-mega-green.jpg", category: "Canned Food", description: "Includes sardines, meat loaf, beef loaf, carne norte, corned beef, tuna, and more. Perfect for quick and easy everyday meals. Long shelf life and packed with flavor." },
+  { name: "Bath Soap", price: 25, img: "/products/bath-soap.jpg", category: "Personal Care", description: "Gentle and effective soap for daily skin care. Leaves your skin feeling fresh and clean all day. Available in various scents and formulas." },
+  { name: "Laundry Soap", price: 20, img: "/products/laundry-soap.jpg", category: "Personal Care", description: "Keeps your clothes fresh and clean. Available in different variants for all fabric types. Affordable and effective for everyday laundry needs." },
+  { name: "Eggs", price: 10, img: "/products/eggs.jpg", category: "Fresh Produce", description: "Farm-fresh eggs packed with protein and nutrients. Perfect for breakfast, baking, and everyday cooking. Sourced from healthy and well-fed chickens." },
+  { name: "Toothpaste", price: 35, img: "/products/toothpaste.jpg", category: "Personal Care", description: "Protects your teeth from cavities and keeps breath fresh. Formulated for strong enamel and healthy gums. Trusted by families for daily oral care." },
+  { name: "Shampoo", price: 45, img: "/products/shampoo.jpg", category: "Personal Care", description: "Nourishes and strengthens your hair from root to tip. Leaves hair smooth, shiny, and manageable every day. Available in variants for all hair types." },
 ];
 
 const productRoutes: { [key: string]: string } = {
@@ -30,7 +30,7 @@ export default function Home() {
   const [search, setSearch] = useState("");
   const [activeCategory, setActiveCategory] = useState("All");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const categories = ["All", ...Array.from(new Set(products.map((p) => p.category)))];
+  const categories = ["All", ...Array.from(new Set(products.map((p) => p.category).filter(Boolean)))];
 
   useEffect(() => {
     const supabase = createClient();

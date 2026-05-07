@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import Navbar from "../components/Navbar";
 import { createClient } from "@/lib/supabase/client";
 
-type Item = { name: string; price: number; img: string };
+type Item = { name: string; price: number; img: string; stock?: number };
 type CartItem = Item & { qty: number };
 type PaymentMethod = "Cash" | "GCash";
 
@@ -82,7 +82,7 @@ export default function ProductPage({ title, category, items }: { title: string;
 
         <div style={styles.grid}>
           {items.map((p, i) => (
-            <div key={i} style={styles.card}
+            <div key={i} style={{ ...styles.card, opacity: p.stock === 0 ? 0.7 : 1 }}
               onMouseEnter={(e) => {
                 (e.currentTarget as HTMLDivElement).style.transform = "translateY(-4px)";
                 (e.currentTarget as HTMLDivElement).style.boxShadow = "0 12px 28px rgba(22,163,74,0.18)";
@@ -93,8 +93,11 @@ export default function ProductPage({ title, category, items }: { title: string;
               }}
             >
               <div style={{ position: "relative" }}>
-                <img src={p.img} alt={p.name} style={styles.productImage} />
+                <img src={p.img} alt={p.name} style={{ ...styles.productImage, filter: p.stock === 0 ? "grayscale(60%)" : "none" }} />
                 <span style={styles.categoryBadge2}>{category}</span>
+                {p.stock === 0 && (
+                  <span style={{ position: "absolute", top: 8, right: 8, background: "#ef4444", color: "white", fontSize: "11px", fontWeight: 800, padding: "3px 10px", borderRadius: "12px" }}>Out of Stock</span>
+                )}
               </div>
               <div style={styles.cardBody}>
                 <h3 style={styles.cardName}>{p.name}</h3>
@@ -104,8 +107,8 @@ export default function ProductPage({ title, category, items }: { title: string;
                   <span style={{ fontWeight: 700, fontSize: "15px", minWidth: "28px", textAlign: "center" }}>{qty[i] || 1}</span>
                   <button onClick={() => setQty({ ...qty, [i]: (qty[i] || 1) + 1 })} style={styles.qtyBtn}>+</button>
                 </div>
-                <button onClick={() => addToCart(p, i)} style={{ ...styles.addBtn, background: added[i] ? "#16a34a" : "#15803d" }}>
-                  {added[i] ? "✅ Added!" : "🛒 Add to Cart"}
+                <button onClick={() => addToCart(p, i)} disabled={p.stock === 0} style={{ ...styles.addBtn, background: p.stock === 0 ? "#9ca3af" : added[i] ? "#16a34a" : "#15803d", cursor: p.stock === 0 ? "not-allowed" : "pointer" }}>
+                  {p.stock === 0 ? "Out of Stock" : added[i] ? "✅ Added!" : "🛒 Add to Cart"}
                 </button>
               </div>
             </div>
