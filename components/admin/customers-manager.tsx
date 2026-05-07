@@ -25,10 +25,9 @@ export function CustomersManager() {
     setLoading(true);
     setError("");
 
-    // Get unique users from storefront_orders
     const { data: orders, error: fetchError } = await (supabase as any)
       .from("storefront_orders")
-      .select("user_id, created_at, customer_name, customer_email");
+      .select("*");
 
     if (fetchError) {
       setError(fetchError.message);
@@ -36,11 +35,17 @@ export function CustomersManager() {
       return;
     }
 
-    // Group by user_id
+    // Group by user_id client-side
     const userMap: Record<string, { user_id: string; total_orders: number; created_at: string; name: string; email: string }> = {};
     (orders ?? []).forEach((o: any) => {
       if (!userMap[o.user_id]) {
-        userMap[o.user_id] = { user_id: o.user_id, total_orders: 0, created_at: o.created_at, name: o.customer_name || "", email: o.customer_email || "" };
+        userMap[o.user_id] = {
+          user_id: o.user_id,
+          total_orders: 0,
+          created_at: o.created_at,
+          name: o.customer_name || "",
+          email: o.customer_email || "",
+        };
       }
       userMap[o.user_id].total_orders += 1;
     });
