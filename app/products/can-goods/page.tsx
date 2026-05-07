@@ -11,5 +11,5 @@ const items = [
 ];
 
 export default function CanGoodsPage() {
-  return <ProductPage title="🥫 Can Goods" category="Canned Food" items={items} />;
+  return <ProductPage title="🥫 Canned Food" category="Canned Food" items={items} />;
 }

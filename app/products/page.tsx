@@ -12,11 +12,18 @@ type CartItem = Product & { qty: number };
 const productsData: Product[] = [
   { name: "Milk", price: 50, img: "/products/milk.jpg", category: "Dairy" },
   { name: "Can Goods", price: 30, img: "/products/canned.jpg", category: "Canned Food" },
+  { name: "Sardines Mega green", price: 20, img: "/products/sardines-mega-green.jpg", category: "Canned Food" },
+  { name: "Meat Loaf", price: 38, img: "/products/meat-loaf.webp", category: "Canned Food" },
+  { name: "Beef Loaf", price: 42, img: "/products/beef-loaf.webp", category: "Canned Food" },
+  { name: "Carne Norte", price: 55, img: "/products/carne-norte.jpg", category: "Canned Food" },
+  { name: "Corned Beef", price: 45, img: "/products/corned-beef.webp", category: "Canned Food" },
+  { name: "Tuna", price: 35, img: "/products/tuna-spicy.jpg", category: "Canned Food" },
+  { name: "Sardines Mega red", price: 55, img: "/products/sardines-mega-red.webp", category: "Canned Food" },
   { name: "Bath Soap", price: 25, img: "/products/bath-soap.jpg", category: "Personal Care" },
   { name: "Laundry Soap", price: 20, img: "/products/laundry-soap.jpg", category: "Personal Care" },
-  { name: "Eggs", price: 10, img: "/products/eggs.jpg", category: "Fresh Produce" },
   { name: "Toothpaste", price: 35, img: "/products/toothpaste.jpg", category: "Personal Care" },
   { name: "Shampoo", price: 45, img: "/products/shampoo.jpg", category: "Personal Care" },
+  { name: "Eggs", price: 10, img: "/products/eggs.jpg", category: "Fresh Produce" },
   { name: "Biscuits", price: 15, img: "/products/biscuits.jpg", category: "Snacks" },
   { name: "Salt", price: 10, img: "/products/Salt.jpg", category: "Others" },
   { name: "Vinegar", price: 15, img: "/products/Vinegar.webp", category: "Others" },
@@ -26,8 +33,14 @@ const productsData: Product[] = [
 
 const productRoutes: { [key: string]: string } = {
   Milk: "/products/milk",
-  Sardines: "/products/can-goods",
   "Can Goods": "/products/can-goods",
+  "Sardines Mega green": "/products/can-goods",
+  "Meat Loaf": "/products/can-goods",
+  "Beef Loaf": "/products/can-goods",
+  "Carne Norte": "/products/can-goods",
+  "Corned Beef": "/products/can-goods",
+  "Tuna": "/products/can-goods",
+  "Sardines Mega red": "/products/can-goods",
   "Bath Soap": "/products/bath-soap",
   "Laundry Soap": "/products/laundry-soap",
   Eggs: "/products/eggs",
@@ -38,12 +51,6 @@ const productRoutes: { [key: string]: string } = {
   Vinegar: "/products/venigar",
   "Magic Sarap": "/products/magic-sarap",
   Vetsin: "/products/vetsin",
-  Cornstarch: "/products/cornstarch",
-  Patis: "/products/patis",
-  "Sinigang Mix": "/products/sinigang",
-  "Sarsaya Oyster Sauce": "/products/sarsaya",
-  Knorr: "/products/knorr",
-  Paminta: "/products/paminta",
 };
 
 const categories = ["All", ...Array.from(new Set(productsData.map((p) => p.category)))];

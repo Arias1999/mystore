@@ -50,15 +50,15 @@ export function OrdersManager() {
     const userIds = [...new Set((data ?? []).map((o: any) => o.user_id).filter(Boolean))];
     let userMap: Record<string, { email: string; name: string }> = {};
     if (userIds.length > 0) {
-      const { data: users } = await supabase.from("users").select("id, email, name").in("id", userIds);
+      const { data: users } = await (supabase as any).from("users").select("id, email, full_name").in("id", userIds);
       (users ?? []).forEach((u: any) => {
-        userMap[u.id] = { email: u.email ?? "", name: u.name ?? "" };
+        userMap[u.id] = { email: u.email ?? "", name: u.full_name ?? "" };
       });
     }
     setOrders((data ?? []).map((o: any) => ({
       ...o,
-      user_email: userMap[o.user_id]?.email ?? o.user_id.slice(0, 8),
-      user_name: userMap[o.user_id]?.name || userMap[o.user_id]?.email || o.user_id.slice(0, 8),
+      user_email: o.customer_email || userMap[o.user_id]?.email || o.user_id.slice(0, 8),
+      user_name: o.customer_name || userMap[o.user_id]?.name || o.customer_email || o.user_id.slice(0, 8),
       user_address: o.delivery_address ?? "",
       user_phone: o.delivery_phone ?? "",
     })));
@@ -202,8 +202,9 @@ export function OrdersManager() {
             <div className="flex items-center justify-between rounded-t-2xl border-b bg-[var(--surface-soft)] px-5 py-4">
               <div>
                 <p className="font-bold text-[var(--text)]">Order #{activeOrder.id.slice(0, 8)}</p>
-                <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_name || activeOrder.user_email}</p>
+                <p className="text-sm font-semibold text-[var(--text)]">{activeOrder.user_name || "—"}</p>
                 <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_email}</p>
+                {activeOrder.user_phone && <p className="text-xs text-[var(--text-muted)]">{activeOrder.user_phone}</p>}
               </div>
               <button onClick={() => setActiveOrder(null)} className="text-[var(--text-muted)] hover:text-[var(--text)]">✕</button>
             </div>

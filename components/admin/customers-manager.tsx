@@ -9,7 +9,7 @@ import { Pagination } from "@/components/admin/pagination";
 import { formatDate } from "@/lib/utils";
 import type { Database } from "@/types/database";
 
-type Customer = { id: string; name: string | null; email: string; created_at: string; total_orders?: number };
+type Customer = { id: string; full_name: string | null; email: string; created_at: string; total_orders?: number };
 
 const PAGE_SIZE = 10;
 
@@ -25,11 +25,10 @@ export function CustomersManager() {
     setLoading(true);
     setError("");
 
-    const { data, error: fetchError } = await supabase
-      .from("users")
-      .select("id, name, email, created_at")
-      .eq("role", "customer")
-      .order("created_at", { ascending: false });
+    // Get unique users from storefront_orders
+    const { data: orders, error: fetchError } = await (supabase as any)
+      .from("storefront_orders")
+      .select("user_id, created_at, customer_name, customer_email");
 
     if (fetchError) {
       setError(fetchError.message);
@@ -37,17 +36,24 @@ export function CustomersManager() {
       return;
     }
 
-    // Get order counts per user
-    const { data: orders } = await supabase
-      .from("storefront_orders")
-      .select("user_id");
-
-    const orderCounts: Record<string, number> = {};
+    // Group by user_id
+    const userMap: Record<string, { user_id: string; total_orders: number; created_at: string; name: string; email: string }> = {};
     (orders ?? []).forEach((o: any) => {
-      orderCounts[o.user_id] = (orderCounts[o.user_id] || 0) + 1;
+      if (!userMap[o.user_id]) {
+        userMap[o.user_id] = { user_id: o.user_id, total_orders: 0, created_at: o.created_at, name: o.customer_name || "", email: o.customer_email || "" };
+      }
+      userMap[o.user_id].total_orders += 1;
     });
 
-    setCustomers((data ?? []).map((c: any) => ({ ...c, total_orders: orderCounts[c.id] || 0 })));
+    const uniqueUsers = Object.values(userMap).map((u) => ({
+      id: u.user_id,
+      full_name: u.name || null,
+      email: u.email || u.user_id.slice(0, 8),
+      created_at: u.created_at,
+      total_orders: u.total_orders,
+    }));
+
+    setCustomers(uniqueUsers);
     setLoading(false);
   }, [supabase]);
 
@@ -71,7 +77,7 @@ export function CustomersManager() {
     const lower = search.trim().toLowerCase();
     if (!lower) return customers;
     return customers.filter((customer) => {
-      return (customer.name ?? "").toLowerCase().includes(lower) || customer.email.toLowerCase().includes(lower);
+      return (customer.full_name ?? "").toLowerCase().includes(lower) || customer.email.toLowerCase().includes(lower);
     });
   }, [customers, search]);
 
@@ -111,7 +117,7 @@ export function CustomersManager() {
           <tbody>
             {paginated.map((customer) => (
               <tr key={customer.id} className="border-b border-[var(--line)] last:border-b-0">
-                <td className="px-4 py-3 text-[var(--text)]">{customer.name ?? "No name"}</td>
+                <td className="px-4 py-3 text-[var(--text)]">{customer.full_name ?? "No name"}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">{customer.email}</td>
                 <td className="px-4 py-3 text-[var(--text-muted)]">-</td>
                 <td className="px-4 py-3 text-[var(--text)]">{customer.total_orders ?? 0}</td>
