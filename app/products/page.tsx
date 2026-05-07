@@ -11,7 +11,7 @@ type CartItem = Product & { qty: number };
 
 const productsData: Product[] = [
   { name: "Milk", price: 50, img: "/products/milk.jpg", category: "Dairy" },
-  { name: "Sardines", price: 30, img: "/products/canned.jpg", category: "Canned Food" },
+  { name: "Can Goods", price: 30, img: "/products/canned.jpg", category: "Canned Food" },
   { name: "Bath Soap", price: 25, img: "/products/bath-soap.jpg", category: "Personal Care" },
   { name: "Laundry Soap", price: 20, img: "/products/laundry-soap.jpg", category: "Personal Care" },
   { name: "Eggs", price: 10, img: "/products/eggs.jpg", category: "Fresh Produce" },

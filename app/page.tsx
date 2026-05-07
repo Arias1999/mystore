@@ -16,6 +16,15 @@ const products = [
   { name: "Shampoo", img: "/products/shampoo.jpg", category: "Personal Care", description: "Nourishes and strengthens your hair from root to tip. Leaves hair smooth, shiny, and manageable every day. Available in variants for all hair types." },
 ];
 
+const productRoutes: { [key: string]: string } = {
+  "Can Goods": "/products/can-goods",
+  "Bath Soap": "/products/bath-soap",
+  "Laundry Soap": "/products/laundry-soap",
+  "Eggs": "/products/eggs",
+  "Toothpaste": "/products/toothpaste",
+  "Shampoo": "/products/shampoo",
+};
+
 export default function Home() {
   const router = useRouter();
   const [search, setSearch] = useState("");
@@ -135,7 +144,7 @@ export default function Home() {
           <div
             key={i}
             style={styles.card}
-            onClick={() => handleShop("/products")}
+            onClick={() => handleShop(productRoutes[p.name] || "/products")}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLDivElement).style.transform = "translateY(-6px)";
               (e.currentTarget as HTMLDivElement).style.boxShadow = "0 16px 32px rgba(22,163,74,0.18)";
